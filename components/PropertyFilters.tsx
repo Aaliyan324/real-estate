@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Filter, RotateCcw, Building, Home, MapPin, DollarSign, Bed, Bath, Sparkles } from 'lucide-react'
+import { Filter, RotateCcw } from 'lucide-react'
 
 interface PropertyFiltersProps {
   filters: {

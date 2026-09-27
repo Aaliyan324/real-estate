@@ -1,14 +1,38 @@
 'use client'
 
 import React, { useState } from 'react'
-import { X, Building2, Upload } from 'lucide-react'
+import { X } from 'lucide-react'
 import ImageUploader from './ImageUploader'
+
+export interface PropertyFormInitialData {
+  id?: string
+  title?: string
+  description?: string
+  purpose?: string
+  propertyType?: string
+  price?: number
+  city?: string
+  area?: string
+  society?: string | null
+  address?: string
+  bedrooms?: number
+  bathrooms?: number
+  areaSize?: number
+  areaUnit?: string
+  furnishing?: string
+  parking?: boolean
+  isFeatured?: boolean
+  isVerified?: boolean
+  status?: string
+  images?: { url: string }[]
+  features?: { name: string }[]
+}
 
 interface PropertyFormModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  initialData?: any
+  initialData?: PropertyFormInitialData | null
 }
 
 const PAKISTAN_CITIES = ['Lahore', 'Islamabad', 'Karachi', 'Rawalpindi', 'Faisalabad', 'Multan', 'Sahiwal', 'Gujranwala', 'Peshawar', 'Quetta']
@@ -19,22 +43,22 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
     description: initialData?.description || '',
     purpose: initialData?.purpose || 'FOR_SALE',
     propertyType: initialData?.propertyType || 'HOUSE',
-    price: initialData?.price || '',
+    price: initialData?.price ? initialData.price.toString() : '',
     city: initialData?.city || 'Lahore',
     area: initialData?.area || '',
     society: initialData?.society || '',
     address: initialData?.address || '',
-    bedrooms: initialData?.bedrooms || '3',
-    bathrooms: initialData?.bathrooms || '3',
-    areaSize: initialData?.areaSize || '5',
+    bedrooms: initialData?.bedrooms ? initialData.bedrooms.toString() : '3',
+    bathrooms: initialData?.bathrooms ? initialData.bathrooms.toString() : '3',
+    areaSize: initialData?.areaSize ? initialData.areaSize.toString() : '5',
     areaUnit: initialData?.areaUnit || 'MARLA',
     furnishing: initialData?.furnishing || 'UNFURNISHED',
     parking: initialData?.parking ?? true,
     isFeatured: initialData?.isFeatured ?? false,
     isVerified: initialData?.isVerified ?? true,
     status: initialData?.status || 'PUBLISHED',
-    images: initialData?.images ? initialData.images.map((img: any) => img.url) : [],
-    featuresText: initialData?.features ? initialData.features.map((f: any) => f.name).join(', ') : 'Electricity, Gas, Water, Security',
+    images: initialData?.images ? initialData.images.map((img) => img.url) : [],
+    featuresText: initialData?.features ? initialData.features.map((f) => f.name).join(', ') : 'Electricity, Gas, Water, Security',
   })
 
   const [submitting, setSubmitting] = useState(false)

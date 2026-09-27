@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { FileText, Download, Printer } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { formatPKRPrice, formatAreaUnit } from '@/lib/utils'
 
 interface PropertyBrochureProps {

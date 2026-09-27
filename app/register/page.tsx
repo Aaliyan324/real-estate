@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { Building2, User, Mail, Lock, Phone, Briefcase } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()

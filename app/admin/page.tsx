@@ -3,34 +3,84 @@
 import React, { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import PropertyFormModal from '@/components/PropertyFormModal'
+import PropertyFormModal, { PropertyFormInitialData } from '@/components/PropertyFormModal'
 import {
   Building2,
-  Users,
   MessageSquare,
   Calendar,
   Plus,
-  CheckCircle,
-  XCircle,
   Edit,
   Trash2,
   ShieldCheck,
   Star,
-  Eye,
 } from 'lucide-react'
 import { formatPKRPrice } from '@/lib/utils'
+
+interface AdminProperty {
+  id: string
+  title: string
+  area: string
+  city: string
+  price: number
+  purpose: string
+  status: string
+  isFeatured: boolean
+  isVerified: boolean
+  description?: string
+  propertyType?: string
+  society?: string
+  address?: string
+  bedrooms?: number
+  bathrooms?: number
+  areaSize?: number
+  areaUnit?: string
+  furnishing?: string
+  parking?: boolean
+  images?: { url: string }[]
+  features?: { name: string }[]
+}
+
+interface AdminInquiry {
+  id: string
+  name: string
+  email: string
+  phone: string
+  message: string
+  status: string
+  property?: { title: string } | null
+}
+
+interface AdminVisit {
+  id: string
+  name: string
+  phone: string
+  preferredDate: string
+  preferredTime: string
+  status: string
+  property?: { title: string } | null
+}
+
+interface AdminAgent {
+  id: string
+  name: string
+  agency: string
+  phone: string
+  email: string
+  isVerified: boolean
+  _count?: { properties: number }
+}
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'properties' | 'inquiries' | 'visits' | 'agents'>('properties')
 
-  const [properties, setProperties] = useState<any[]>([])
-  const [inquiries, setInquiries] = useState<any[]>([])
-  const [visits, setVisits] = useState<any[]>([])
-  const [agents, setAgents] = useState<any[]>([])
+  const [properties, setProperties] = useState<AdminProperty[]>([])
+  const [inquiries, setInquiries] = useState<AdminInquiry[]>([])
+  const [visits, setVisits] = useState<AdminVisit[]>([])
+  const [agents, setAgents] = useState<AdminAgent[]>([])
   const [loading, setLoading] = useState(true)
 
   const [propertyModalOpen, setPropertyModalOpen] = useState(false)
-  const [selectedProperty, setSelectedProperty] = useState<any | null>(null)
+  const [selectedProperty, setSelectedProperty] = useState<PropertyFormInitialData | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
@@ -132,7 +182,7 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <span className="text-xs font-bold uppercase text-gray-400">Total Properties</span>
-              <p className="text-2xl font-black text-gray-900">{properties.length}</p>
+              <p className="text-2xl font-black text-gray-900">{loading ? '...' : properties.length}</p>
             </div>
           </div>
 
@@ -242,7 +292,29 @@ export default function AdminDashboardPage() {
                       <td className="p-4 text-right space-x-2">
                         <button
                           onClick={() => {
-                            setSelectedProperty(prop)
+                            setSelectedProperty({
+                              id: prop.id,
+                              title: prop.title,
+                              description: prop.description,
+                              purpose: prop.purpose,
+                              propertyType: prop.propertyType,
+                              price: prop.price,
+                              city: prop.city,
+                              area: prop.area,
+                              society: prop.society,
+                              address: prop.address,
+                              bedrooms: prop.bedrooms,
+                              bathrooms: prop.bathrooms,
+                              areaSize: prop.areaSize,
+                              areaUnit: prop.areaUnit,
+                              furnishing: prop.furnishing,
+                              parking: prop.parking,
+                              isFeatured: prop.isFeatured,
+                              isVerified: prop.isVerified,
+                              status: prop.status,
+                              images: prop.images,
+                              features: prop.features,
+                            })
                             setPropertyModalOpen(true)
                           }}
                           className="p-1.5 text-blue-600 hover:bg-blue-50 rounded cursor-pointer"

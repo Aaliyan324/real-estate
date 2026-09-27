@@ -26,14 +26,22 @@ export interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFavorited, setIsFavorited] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    const saved = localStorage.getItem('pak_haven_favorites')
+    if (saved) {
+      const list: string[] = JSON.parse(saved)
+      return list.includes(property.id)
+    }
+    return false
+  })
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     const saved = localStorage.getItem('pak_haven_favorites')
     let list: string[] = saved ? JSON.parse(saved) : []
-    
+
     if (list.includes(property.id)) {
       list = list.filter((id) => id !== property.id)
       setIsFavorited(false)
@@ -43,17 +51,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     }
     localStorage.setItem('pak_haven_favorites', JSON.stringify(list))
   }
-
-  // Check initial favorite status
-  React.useEffect(() => {
-    const saved = localStorage.getItem('pak_haven_favorites')
-    if (saved) {
-      const list: string[] = JSON.parse(saved)
-      if (list.includes(property.id)) {
-        setIsFavorited(true)
-      }
-    }
-  }, [property.id])
 
   const mainImage = property.images && property.images.length > 0
     ? property.images[0].url
@@ -69,7 +66,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center z-10">
           <span className={`text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-white shadow-xs ${

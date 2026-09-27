@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Calendar, Clock, User, Mail, Phone, MessageSquare, X, CheckCircle2 } from 'lucide-react'
+import { Calendar, X, CheckCircle2 } from 'lucide-react'
 
 interface ScheduleVisitModalProps {
   propertyId: string

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Calculator, DollarSign, Calendar, Percent, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { Calculator } from 'lucide-react'
 import { formatPKRPrice } from '@/lib/utils'
 
 export default function MortgageCalculator() {

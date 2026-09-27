@@ -1,16 +1,15 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import React, { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import PropertyCard, { PropertyCardProps } from '@/components/PropertyCard'
 import PropertyFilters from '@/components/PropertyFilters'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { Search, Map, LayoutGrid, SlidersHorizontal, ChevronLeft, ChevronRight, Building2 } from 'lucide-react'
+import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, Building2 } from 'lucide-react'
 
 function PropertiesContent() {
   const searchParams = useSearchParams()
-  const router = useRouter()
 
   const [properties, setProperties] = useState<PropertyCardProps['property'][]>([])
   const [loading, setLoading] = useState(true)
@@ -36,42 +35,44 @@ function PropertiesContent() {
   const [sort, setSort] = useState(searchParams.get('sort') || 'newest')
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10))
 
-  const fetchProperties = useCallback(async () => {
+  useEffect(() => {
+    let isSubscribed = true
     setLoading(true)
-    try {
-      const queryParams = new URLSearchParams()
-      if (filters.purpose) queryParams.set('purpose', filters.purpose)
-      if (filters.type) queryParams.set('type', filters.type)
-      if (filters.city) queryParams.set('city', filters.city)
-      if (filters.query) queryParams.set('query', filters.query)
-      if (filters.minPrice) queryParams.set('minPrice', filters.minPrice)
-      if (filters.maxPrice) queryParams.set('maxPrice', filters.maxPrice)
-      if (filters.bedrooms) queryParams.set('bedrooms', filters.bedrooms)
-      if (filters.bathrooms) queryParams.set('bathrooms', filters.bathrooms)
-      if (filters.featured) queryParams.set('featured', 'true')
-      if (filters.verified) queryParams.set('verified', 'true')
-      queryParams.set('sort', sort)
-      queryParams.set('page', page.toString())
-      queryParams.set('limit', '12')
 
-      const res = await fetch(`/api/properties?${queryParams.toString()}`)
-      const data = await res.json()
+    const queryParams = new URLSearchParams()
+    if (filters.purpose) queryParams.set('purpose', filters.purpose)
+    if (filters.type) queryParams.set('type', filters.type)
+    if (filters.city) queryParams.set('city', filters.city)
+    if (filters.query) queryParams.set('query', filters.query)
+    if (filters.minPrice) queryParams.set('minPrice', filters.minPrice)
+    if (filters.maxPrice) queryParams.set('maxPrice', filters.maxPrice)
+    if (filters.bedrooms) queryParams.set('bedrooms', filters.bedrooms)
+    if (filters.bathrooms) queryParams.set('bathrooms', filters.bathrooms)
+    if (filters.featured) queryParams.set('featured', 'true')
+    if (filters.verified) queryParams.set('verified', 'true')
+    queryParams.set('sort', sort)
+    queryParams.set('page', page.toString())
+    queryParams.set('limit', '12')
 
-      if (res.ok) {
-        setProperties(data.properties || [])
-        setTotal(data.pagination?.total || 0)
-        setTotalPages(data.pagination?.totalPages || 1)
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
+    fetch(`/api/properties?${queryParams.toString()}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isSubscribed) {
+          setProperties(data.properties || [])
+          setTotal(data.pagination?.total || 0)
+          setTotalPages(data.pagination?.totalPages || 1)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        if (isSubscribed) setLoading(false)
+      })
+
+    return () => {
+      isSubscribed = false
     }
   }, [filters, sort, page])
-
-  useEffect(() => {
-    fetchProperties()
-  }, [fetchProperties])
 
   const handleFilterChange = (key: string, value: unknown) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
@@ -118,12 +119,6 @@ function PropertiesContent() {
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#16834B]"
               />
             </div>
-            <button
-              onClick={() => fetchProperties()}
-              className="w-full sm:w-auto bg-[#1F2937] hover:bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold transition cursor-pointer"
-            >
-              Search
-            </button>
           </div>
         </div>
       </div>
@@ -227,7 +222,7 @@ function PropertiesContent() {
                 </p>
                 <button
                   onClick={handleReset}
-                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-xs font-bold px-4 py-2 rounded-lg transition"
+                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer"
                 >
                   Clear All Filters
                 </button>

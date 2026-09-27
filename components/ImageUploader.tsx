@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Upload, X, Check, Image as ImageIcon } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 
 interface ImageUploaderProps {
   images: string[]

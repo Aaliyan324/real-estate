@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 import {
   Bed,
   Bath,
@@ -11,12 +10,9 @@ import {
   Calendar,
   Phone,
   MessageCircle,
-  Mail,
   Heart,
   Share2,
   CheckCircle2,
-  Building,
-  UserCheck,
   Check,
   Expand,
   X,
@@ -343,7 +339,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
                 <h4 className="font-bold text-gray-900 text-lg flex items-center justify-center space-x-1">
                   <span>{property.agent?.name || 'PakHaven Real Estate'}</span>
                   {property.agent?.isVerified && (
-                    <ShieldCheck className="w-4 h-4 text-[#16834B]" title="Verified Agent" />
+                    <span title="Verified Agent"><ShieldCheck className="w-4 h-4 text-[#16834B]" /></span>
                   )}
                 </h4>
                 <p className="text-xs text-[#16834B] font-semibold">{property.agent?.agency || 'Verified Partner Agency'}</p>

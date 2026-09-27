@@ -5,7 +5,9 @@ import { prisma } from '@/lib/prisma'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PropertyCard from '@/components/PropertyCard'
-import { ShieldCheck, Phone, MessageCircle, Mail, Building2, MapPin } from 'lucide-react'
+import { ShieldCheck, Phone, MessageCircle, Mail, Building2 } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -13,33 +15,42 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const agent = await prisma.agent.findFirst({
-    where: { OR: [{ slug }, { id: slug }] },
-  })
+  try {
+    const agent = await prisma.agent.findFirst({
+      where: { OR: [{ slug }, { id: slug }] },
+    })
 
-  if (!agent) {
+    if (!agent) {
+      return { title: 'Agent Profile | PakHaven' }
+    }
+
+    return {
+      title: `${agent.name} - ${agent.agency} | PakHaven Real Estate`,
+      description: `Contact ${agent.name} from ${agent.agency}. View active properties for sale and rent in Pakistan.`,
+    }
+  } catch {
     return { title: 'Agent Profile | PakHaven' }
-  }
-
-  return {
-    title: `${agent.name} - ${agent.agency} | PakHaven Real Estate`,
-    description: `Contact ${agent.name} from ${agent.agency}. View active properties for sale and rent in Pakistan.`,
   }
 }
 
 export default async function AgentProfilePage({ params }: Props) {
   const { slug } = await params
 
-  const agent = await prisma.agent.findFirst({
-    where: { OR: [{ slug }, { id: slug }] },
-    include: {
-      properties: {
-        where: { status: 'PUBLISHED' },
-        include: { images: true },
-        orderBy: { createdAt: 'desc' },
+  let agent = null
+  try {
+    agent = await prisma.agent.findFirst({
+      where: { OR: [{ slug }, { id: slug }] },
+      include: {
+        properties: {
+          where: { status: 'PUBLISHED' },
+          include: { images: true },
+          orderBy: { createdAt: 'desc' },
+        },
       },
-    },
-  })
+    })
+  } catch (err) {
+    console.error(err)
+  }
 
   if (!agent) {
     notFound()

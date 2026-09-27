@@ -3,7 +3,9 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { ShieldCheck, Phone, MessageCircle, Building2, Search, Award } from 'lucide-react'
+import { ShieldCheck, MessageCircle } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Real Estate Agents & Agencies Directory | PakHaven',
@@ -11,14 +13,19 @@ export const metadata = {
 }
 
 export default async function AgentsPage() {
-  const agents = await prisma.agent.findMany({
-    orderBy: { isVerified: 'desc' },
-    include: {
-      _count: {
-        select: { properties: true },
+  let agents: any[] = []
+  try {
+    agents = await prisma.agent.findMany({
+      orderBy: { isVerified: 'desc' },
+      include: {
+        _count: {
+          select: { properties: true },
+        },
       },
-    },
-  })
+    })
+  } catch (err) {
+    console.error('Agents page DB error:', err)
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7F6] flex flex-col">
@@ -58,12 +65,12 @@ export default async function AgentsPage() {
                     <div className="space-y-1">
                       <h3 className="font-bold text-gray-900 text-base flex items-center space-x-1">
                         <span>{agent.name}</span>
-                        {agent.isVerified && <ShieldCheck className="w-4 h-4 text-[#16834B]" title="Verified Agent" />}
+                        {agent.isVerified && <span title="Verified Agent"><ShieldCheck className="w-4 h-4 text-[#16834B]" /></span>}
                       </h3>
                       <p className="text-xs text-[#16834B] font-semibold">{agent.agency}</p>
                       <div className="text-xs text-gray-500 font-medium pt-1">
                         <span className="bg-gray-100 px-2 py-0.5 rounded text-[11px] font-bold text-gray-700">
-                          {agent._count.properties} Listed Properties
+                          {agent._count?.properties || 0} Listed Properties
                         </span>
                       </div>
                     </div>
