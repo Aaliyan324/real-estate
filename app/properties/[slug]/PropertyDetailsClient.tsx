@@ -64,31 +64,27 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [visitModalOpen, setVisitModalOpen] = useState(false)
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFavorited, setIsFavorited] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    const saved = localStorage.getItem('pak_haven_favorites')
+    if (saved) {
+      try {
+        const list: string[] = JSON.parse(saved)
+        return list.includes(property.id)
+      } catch {
+        return false
+      }
+    }
+    return false
+  })
   const [copiedShare, setCopiedShare] = useState(false)
-
-  // Inquiry Form State
-  const [inquiryName, setInquiryName] = useState('')
-  const [inquiryEmail, setInquiryEmail] = useState('')
-  const [inquiryPhone, setInquiryPhone] = useState('')
-  const [inquiryMessage, setInquiryMessage] = useState(`Hello, I am interested in ${property.title}. (Property ID: ${property.id})`)
-  const [inquirySubmitting, setInquirySubmitting] = useState(false)
-  const [inquirySuccess, setInquirySuccess] = useState(false)
-  const [inquiryError, setInquiryError] = useState<string | null>(null)
-
-  const images = property.images && property.images.length > 0
-    ? property.images.map((img) => img.url)
-    : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&auto=format&fit=crop&q=80']
-
-  // WhatsApp dynamic URL setup
-  const whatsappNumber = property.agent?.whatsapp || property.agent?.phone?.replace(/[^0-9]/g, '') || '923000000000'
-  const whatsappMessage = encodeURIComponent(`Hello, I am interested in "${property.title}" listed on PakHaven. Property ID: ${property.id}`)
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
 
   const handleToggleFavorite = () => {
     const saved = localStorage.getItem('pak_haven_favorites')
-    let list: string[] = saved ? JSON.parse(saved) : []
-
+    let list: string[] = []
+    if (saved) {
+      try { list = JSON.parse(saved) } catch { list = [] }
+    }
     if (list.includes(property.id)) {
       list = list.filter((id) => id !== property.id)
       setIsFavorited(false)
@@ -98,16 +94,6 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
     }
     localStorage.setItem('pak_haven_favorites', JSON.stringify(list))
   }
-
-  React.useEffect(() => {
-    const saved = localStorage.getItem('pak_haven_favorites')
-    if (saved) {
-      const list: string[] = JSON.parse(saved)
-      if (list.includes(property.id)) {
-        setIsFavorited(true)
-      }
-    }
-  }, [property.id])
 
   const handleShare = () => {
     if (navigator.clipboard) {

@@ -3,35 +3,22 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PropertyCard from '@/components/PropertyCard'
+import HeroSearch from '@/components/HeroSearch'
 import { prisma } from '@/lib/prisma'
 import {
-  Search,
-  Building2,
-  Home as HomeIcon,
-  Building,
-  Store,
-  Briefcase,
   ShieldCheck,
   Users,
   Calendar,
   Calculator,
   ArrowRight,
-  MapPin,
+  TrendingUp,
 } from 'lucide-react'
 
 export const metadata = {
   title: 'PakHaven | Pakistan Real Estate Marketplace - Buy, Sell & Rent Properties',
-  description: 'Search verified houses, apartments, plots, and commercial properties for sale and rent in Lahore, Islamabad, Karachi, Rawalpindi, DHA, and Bahria Town.',
+  description:
+    'Search verified houses, apartments, plots, and commercial properties for sale and rent in Lahore, Islamabad, Karachi, Rawalpindi, DHA, and Bahria Town.',
 }
-
-const PROPERTY_TYPES = [
-  { name: 'Houses', type: 'HOUSE', icon: HomeIcon, count: '1,200+' },
-  { name: 'Apartments', type: 'APARTMENT', icon: Building2, count: '850+' },
-  { name: 'Plots', type: 'PLOT', icon: MapPin, count: '2,400+' },
-  { name: 'Commercial', type: 'COMMERCIAL', icon: Building, count: '430+' },
-  { name: 'Offices', type: 'OFFICE', icon: Briefcase, count: '310+' },
-  { name: 'Shops', type: 'SHOP', icon: Store, count: '520+' },
-]
 
 const POPULAR_LOCATIONS = [
   {
@@ -57,7 +44,7 @@ const POPULAR_LOCATIONS = [
 ]
 
 export default async function HomePage() {
-  let featuredProperties: any[] = []
+  let featuredProperties: PropertyCardProps['property'][] = []
   try {
     featuredProperties = await prisma.property.findMany({
       where: { status: 'PUBLISHED', isFeatured: true },
@@ -91,90 +78,18 @@ export default async function HomePage() {
           <div className="space-y-4">
             <span className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-[#F4C430] border border-white/20">
               <ShieldCheck className="w-4 h-4 text-[#F4C430]" />
-              <span>Pakistan&apos;s #1 Verified Real Estate Platform</span>
+              <span>Pakistan&apos;s #1 Verified Real Estate Marketplace</span>
             </span>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
               Find a place you&apos;ll love to call <span className="text-[#F4C430]">home.</span>
             </h1>
             <p className="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              Explore thousands of verified houses, modern apartments, and plots for sale or rent across Lahore, Islamabad, Karachi, and major cities.
+              Explore thousands of verified houses, modern apartments, and plots for sale or rent across Lahore, Islamabad, Karachi, and major cities nationwide.
             </p>
           </div>
 
-          {/* Search Box */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl text-gray-900 text-left max-w-4xl mx-auto space-y-4">
-            <form action="/properties" method="GET" className="space-y-4">
-              {/* Purpose Radio Pills */}
-              <div className="flex space-x-2 border-b border-gray-100 pb-3">
-                <label className="flex items-center space-x-2 font-bold text-xs cursor-pointer text-[#16834B] bg-green-50 px-4 py-2 rounded-lg border border-green-200">
-                  <input type="radio" name="purpose" value="FOR_SALE" defaultChecked className="accent-[#16834B]" />
-                  <span>Buy Property</span>
-                </label>
-                <label className="flex items-center space-x-2 font-bold text-xs cursor-pointer text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
-                  <input type="radio" name="purpose" value="FOR_RENT" className="accent-[#16834B]" />
-                  <span>Rent Property</span>
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {/* Location */}
-                <div>
-                  <label className="block text-[11px] font-bold uppercase text-gray-500 mb-1">City / Location</label>
-                  <select
-                    name="city"
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
-                  >
-                    <option value="">All Pakistan</option>
-                    <option value="Lahore">Lahore</option>
-                    <option value="Islamabad">Islamabad</option>
-                    <option value="Karachi">Karachi</option>
-                    <option value="Rawalpindi">Rawalpindi</option>
-                    <option value="Faisalabad">Faisalabad</option>
-                    <option value="Multan">Multan</option>
-                  </select>
-                </div>
-
-                {/* Property Type */}
-                <div>
-                  <label className="block text-[11px] font-bold uppercase text-gray-500 mb-1">Property Type</label>
-                  <select
-                    name="type"
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
-                  >
-                    <option value="">All Types</option>
-                    <option value="HOUSE">House</option>
-                    <option value="APARTMENT">Apartment</option>
-                    <option value="PLOT">Plot</option>
-                    <option value="COMMERCIAL">Commercial</option>
-                    <option value="OFFICE">Office</option>
-                    <option value="FARM_HOUSE">Farm House</option>
-                  </select>
-                </div>
-
-                {/* Search Term */}
-                <div>
-                  <label className="block text-[11px] font-bold uppercase text-gray-500 mb-1">Area / Keyword</label>
-                  <input
-                    type="text"
-                    name="query"
-                    placeholder="e.g. Bahria, DHA..."
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
-                  />
-                </div>
-
-                {/* Submit button */}
-                <div className="flex items-end">
-                  <button
-                    type="submit"
-                    className="w-full bg-[#16834B] hover:bg-[#126b3d] text-white font-bold text-xs py-3 rounded-lg transition shadow-md flex items-center justify-center space-x-2 cursor-pointer"
-                  >
-                    <Search className="w-4 h-4" />
-                    <span>Search Properties</span>
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+          {/* OLX-Style Prominent Search Hero Box */}
+          <HeroSearch />
         </div>
       </section>
 
@@ -183,6 +98,7 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-200 pb-4">
           <div>
             <div className="flex items-center space-x-2 text-[#F4C430] font-black text-xs uppercase tracking-wider">
+              <TrendingUp className="w-4 h-4 text-[#16834B]" />
               <span>★ Handpicked Listings</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1">Featured Properties</h2>
@@ -207,45 +123,12 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* Browse by Property Type */}
-      <section className="bg-white py-16 px-4 sm:px-6 lg:px-8 border-y border-gray-200">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900">Browse by Property Type</h2>
-            <p className="text-xs text-gray-500 max-w-md mx-auto">
-              Choose from residential houses, luxury flats, plots, commercial offices, and shops across Pakistan.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {PROPERTY_TYPES.map((pt) => {
-              const Icon = pt.icon
-              return (
-                <Link
-                  key={pt.type}
-                  href={`/properties?type=${pt.type}`}
-                  className="bg-gray-50 hover:bg-green-50 border border-gray-200 hover:border-[#16834B] rounded-xl p-5 text-center transition group shadow-2xs space-y-3"
-                >
-                  <div className="w-12 h-12 mx-auto bg-white rounded-xl shadow-xs flex items-center justify-center text-[#16834B] group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-[#16834B] transition">{pt.name}</h3>
-                    <p className="text-[11px] text-gray-500 font-semibold">{pt.count}</p>
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Popular Locations */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black text-gray-900">Explore Top Pakistani Cities</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900">Explore Top Pakistani Real Estate Hubs</h2>
           <p className="text-xs text-gray-500 max-w-md mx-auto">
-            Find premium properties in prime real estate hubs in Pakistan.
+            Find premium residential and commercial properties in prime Pakistani locations.
           </p>
         </div>
 
@@ -254,7 +137,7 @@ export default async function HomePage() {
             <Link
               key={loc.city}
               href={`/properties?city=${loc.city}`}
-              className="relative rounded-2xl overflow-hidden aspect-4/3 group shadow-md"
+              className="relative rounded-2xl overflow-hidden aspect-4/3 group shadow-md hover:shadow-xl transition-all"
             >
               <img
                 src={loc.image}

@@ -83,7 +83,6 @@ export default function AdminDashboardPage() {
   const [selectedProperty, setSelectedProperty] = useState<PropertyFormInitialData | null>(null)
 
   const fetchData = async () => {
-    setLoading(true)
     try {
       const [propRes, inqRes, visRes, agtRes] = await Promise.all([
         fetch('/api/properties?limit=100&status=DRAFT,PUBLISHED,SOLD,RENTED,ARCHIVED'),
@@ -91,12 +90,10 @@ export default function AdminDashboardPage() {
         fetch('/api/visits'),
         fetch('/api/agents'),
       ])
-
       const propData = await propRes.json()
       const inqData = await inqRes.json()
       const visData = await visRes.json()
       const agtData = await agtRes.json()
-
       if (propRes.ok) setProperties(propData.properties || [])
       if (inqRes.ok) setInquiries(inqData.inquiries || [])
       if (visRes.ok) setVisits(visData.visits || [])
@@ -108,9 +105,8 @@ export default function AdminDashboardPage() {
     }
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchData() }, [])
 
   const handleDeleteProperty = async (id: string) => {
     if (!confirm('Are you sure you want to delete this property?')) return

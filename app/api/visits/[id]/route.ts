@@ -15,6 +15,28 @@ export async function PUT(
     const { id } = await params
     const { status } = await request.json()
 
+    const existingVisit = await prisma.propertyVisit.findUnique({
+      where: { id },
+      include: {
+        property: {
+          select: { agentId: true, userId: true },
+        },
+      },
+    })
+
+    if (!existingVisit) {
+      return NextResponse.json({ error: 'Property visit booking not found' }, { status: 404 })
+    }
+
+    if (session.role === 'AGENT') {
+      const isAssigned =
+        (session.agentId && existingVisit.property.agentId === session.agentId) ||
+        existingVisit.property.userId === session.id
+      if (!isAssigned) {
+        return NextResponse.json({ error: 'Forbidden: You do not have permission to modify this visit' }, { status: 403 })
+      }
+    }
+
     const updated = await prisma.propertyVisit.update({
       where: { id },
       data: { status },

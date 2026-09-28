@@ -30,8 +30,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     if (typeof window === 'undefined') return false
     const saved = localStorage.getItem('pak_haven_favorites')
     if (saved) {
-      const list: string[] = JSON.parse(saved)
-      return list.includes(property.id)
+      try {
+        const list: string[] = JSON.parse(saved)
+        return list.includes(property.id)
+      } catch {
+        return false
+      }
     }
     return false
   })
@@ -40,7 +44,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     e.preventDefault()
     e.stopPropagation()
     const saved = localStorage.getItem('pak_haven_favorites')
-    let list: string[] = saved ? JSON.parse(saved) : []
+    let list: string[] = []
+    if (saved) {
+      try {
+        list = JSON.parse(saved)
+      } catch {
+        list = []
+      }
+    }
 
     if (list.includes(property.id)) {
       list = list.filter((id) => id !== property.id)
@@ -52,12 +63,16 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     localStorage.setItem('pak_haven_favorites', JSON.stringify(list))
   }
 
-  const mainImage = property.images && property.images.length > 0
-    ? property.images[0].url
-    : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop&q=80'
+  const mainImage =
+    property.images && property.images.length > 0
+      ? property.images[0].url
+      : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop&q=80'
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col group">
+    <Link
+      href={`/properties/${property.slug}`}
+      className="group block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-[#16834B]/40 transition-all duration-300 flex flex-col focus:outline-none focus:ring-2 focus:ring-[#16834B] cursor-pointer"
+    >
       {/* Image Container */}
       <div className="relative aspect-4/3 w-full bg-gray-100 overflow-hidden">
         <img
@@ -69,9 +84,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center z-10">
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-white shadow-xs ${
-            property.purpose === 'FOR_SALE' ? 'bg-[#16834B]' : 'bg-blue-600'
-          }`}>
+          <span
+            className={`text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-white shadow-xs ${
+              property.purpose === 'FOR_SALE' ? 'bg-[#16834B]' : 'bg-blue-600'
+            }`}
+          >
             {property.purpose === 'FOR_SALE' ? 'For Sale' : 'For Rent'}
           </span>
           {property.isFeatured && (
@@ -83,11 +100,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         {/* Favorite Button */}
         <button
+          type="button"
           onClick={toggleFavorite}
           className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition shadow-md cursor-pointer z-10 ${
             isFavorited ? 'bg-red-50 text-red-500' : 'bg-white/80 text-gray-700 hover:bg-white hover:text-red-500'
           }`}
           title={isFavorited ? 'Remove from Favorites' : 'Save to Favorites'}
+          aria-label={isFavorited ? 'Remove from Favorites' : 'Save to Favorites'}
         >
           <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current text-red-500' : ''}`} />
         </button>
@@ -99,7 +118,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </div>
 
       {/* Content Container */}
-      <div className="p-5 flex-1 flex flex-col justify-between">
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-2">
           {/* Price & Verified */}
           <div className="flex items-center justify-between">
@@ -116,21 +135,21 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
 
           {/* Title */}
-          <Link href={`/properties/${property.slug}`} className="block">
-            <h3 className="font-bold text-gray-900 line-clamp-2 text-base hover:text-[#16834B] transition leading-snug">
-              {property.title}
-            </h3>
-          </Link>
+          <h3 className="font-bold text-gray-900 line-clamp-2 text-base group-hover:text-[#16834B] transition leading-snug">
+            {property.title}
+          </h3>
 
           {/* Location */}
           <div className="flex items-center text-xs text-gray-500 font-medium space-x-1">
             <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-            <span className="truncate">{property.area}, {property.city}</span>
+            <span className="truncate">
+              {property.area}, {property.city}
+            </span>
           </div>
         </div>
 
-        {/* Specs & View Link */}
-        <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600 font-semibold">
+        {/* Specs & View Action Indicator */}
+        <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600 font-semibold">
           <div className="flex items-center space-x-3">
             {property.bedrooms > 0 && (
               <span className="flex items-center space-x-1" title="Bedrooms">
@@ -150,15 +169,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </span>
           </div>
 
-          <Link
-            href={`/properties/${property.slug}`}
-            className="text-[#16834B] hover:text-[#126b3d] font-bold flex items-center space-x-1 group-hover:translate-x-0.5 transition-transform"
-          >
-            <span>View</span>
+          <span className="text-[#16834B] font-bold flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
+            <span>Details</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { Prisma } from '@prisma/client'
 
-export async function GET(request: Request) {
+export async function GET() {
   const session = await getSession()
   if (!session || (session.role !== 'ADMIN' && session.role !== 'AGENT')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const where: any = {}
+    const where: Prisma.InquiryWhereInput = {}
     if (session.role === 'AGENT' && session.agentId) {
       where.agentId = session.agentId
     }

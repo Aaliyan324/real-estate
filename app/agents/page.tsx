@@ -12,8 +12,20 @@ export const metadata = {
   description: 'Find verified real estate agents, agencies, and consultants across Lahore, Islamabad, Karachi, DHA, and Bahria Town.',
 }
 
+interface AgentItem {
+  id: string
+  name: string
+  slug: string
+  agency: string
+  phone: string
+  whatsapp: string | null
+  photo: string | null
+  isVerified: boolean
+  _count: { properties: number }
+}
+
 export default async function AgentsPage() {
-  let agents: any[] = []
+  let agents: AgentItem[] = []
   try {
     agents = await prisma.agent.findMany({
       orderBy: { isVerified: 'desc' },

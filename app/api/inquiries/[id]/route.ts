@@ -15,6 +15,20 @@ export async function PUT(
     const { id } = await params
     const { status } = await request.json()
 
+    const existingInquiry = await prisma.inquiry.findUnique({
+      where: { id },
+    })
+
+    if (!existingInquiry) {
+      return NextResponse.json({ error: 'Inquiry not found' }, { status: 404 })
+    }
+
+    if (session.role === 'AGENT') {
+      if (!session.agentId || existingInquiry.agentId !== session.agentId) {
+        return NextResponse.json({ error: 'Forbidden: You do not have permission to modify this inquiry' }, { status: 403 })
+      }
+    }
+
     const updated = await prisma.inquiry.update({
       where: { id },
       data: { status },

@@ -1,9 +1,27 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Building2, Heart, Calculator, User, LogOut, Menu, X, Shield, Phone, Home, Search, Users } from 'lucide-react'
+import {
+  Building2,
+  Heart,
+  Calculator,
+  User,
+  LogOut,
+  Menu,
+  X,
+  Shield,
+  Phone,
+  Home,
+  Search,
+  ChevronDown,
+  Building,
+  Store,
+  Briefcase,
+  Trees,
+  MapPin,
+} from 'lucide-react'
 
 interface UserSession {
   id: string
@@ -12,12 +30,26 @@ interface UserSession {
   role: string
 }
 
+const CATEGORY_ITEMS = [
+  { name: 'Houses', type: 'HOUSE', icon: Home, desc: 'Residential houses & villas' },
+  { name: 'Apartments / Flats', type: 'APARTMENT', icon: Building2, desc: 'Modern flats & penthouses' },
+  { name: 'Plots & Land', type: 'PLOT', icon: MapPin, desc: 'Residential & commercial plots' },
+  { name: 'Commercial Properties', type: 'COMMERCIAL', icon: Building, desc: 'Plazas, buildings & centers' },
+  { name: 'Offices', type: 'OFFICE', icon: Briefcase, desc: 'Executive corporate offices' },
+  { name: 'Shops', type: 'SHOP', icon: Store, desc: 'Retail shops & commercial spaces' },
+  { name: 'Farm Houses', type: 'FARM_HOUSE', icon: Trees, desc: 'Luxury farmhouses & land' },
+]
+
 export default function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<UserSession | null>(null)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+
+  const categoryRef = useRef<HTMLDivElement>(null)
+  const userRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -29,6 +61,19 @@ export default function Header() {
       })
       .catch(() => {})
   }, [pathname])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setCategoryDropdownOpen(false)
+      }
+      if (userRef.current && !userRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -54,7 +99,7 @@ export default function Header() {
               <span>Helpline: +92 42 111 222 333</span>
             </span>
             <span className="hidden md:inline text-gray-500">|</span>
-            <span className="hidden md:inline">Pakistan&apos;s Trusted Real Estate Portal</span>
+            <span className="hidden md:inline">Pakistan&apos;s Verified Real Estate Marketplace</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/mortgage-calculator" className="hover:text-white transition flex items-center space-x-1">
@@ -84,7 +129,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-7 text-sm font-semibold">
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
             <Link
               href="/"
               className={`transition-colors py-1 ${
@@ -113,13 +158,58 @@ export default function Header() {
             >
               Rent
             </Link>
+
+            {/* Browse by Category Dropdown */}
+            <div ref={categoryRef} className="relative">
+              <button
+                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                className="flex items-center space-x-1 py-1 text-gray-700 hover:text-[#16834B] transition cursor-pointer"
+              >
+                <span>Categories</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {categoryDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-50 divide-y divide-gray-100 animate-fade-in">
+                  <div className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                    Browse Categories
+                  </div>
+                  <div className="py-1">
+                    {CATEGORY_ITEMS.map((cat) => {
+                      const Icon = cat.icon
+                      return (
+                        <Link
+                          key={cat.type}
+                          href={`/properties?type=${cat.type}`}
+                          onClick={() => setCategoryDropdownOpen(false)}
+                          className="flex items-center space-x-3 px-4 py-2.5 hover:bg-green-50 transition group"
+                        >
+                          <div className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-[#16834B] text-gray-600 group-hover:text-white transition">
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-gray-900 group-hover:text-[#16834B] transition">
+                              {cat.name}
+                            </div>
+                            <div className="text-[10px] text-gray-400 font-medium leading-tight">
+                              {cat.desc}
+                            </div>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               href="/properties"
               className={`transition-colors py-1 ${
                 isActive('/properties') ? 'text-[#16834B] border-b-2 border-[#16834B]' : 'text-gray-700 hover:text-[#16834B]'
               }`}
             >
-              Properties
+              All Properties
             </Link>
             <Link
               href="/agents"
@@ -129,28 +219,12 @@ export default function Header() {
             >
               Agents
             </Link>
-            <Link
-              href="/about"
-              className={`transition-colors py-1 ${
-                isActive('/about') ? 'text-[#16834B] border-b-2 border-[#16834B]' : 'text-gray-700 hover:text-[#16834B]'
-              }`}
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className={`transition-colors py-1 ${
-                isActive('/contact') ? 'text-[#16834B] border-b-2 border-[#16834B]' : 'text-gray-700 hover:text-[#16834B]'
-              }`}
-            >
-              Contact
-            </Link>
           </nav>
 
           {/* Desktop Right Action */}
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
-              <div className="relative">
+              <div ref={userRef} className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-800 transition cursor-pointer"
@@ -214,7 +288,7 @@ export default function Header() {
           <div className="flex md:hidden items-center space-x-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-gray-700 hover:text-[#16834B] hover:bg-gray-100 transition focus:outline-none"
+              className="p-2 rounded-md text-gray-700 hover:text-[#16834B] hover:bg-gray-100 transition focus:outline-none cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -250,12 +324,34 @@ export default function Header() {
             <Building2 className="w-5 h-5 text-[#16834B]" />
             <span>Rent Properties</span>
           </Link>
+
+          {/* Mobile Categories list */}
+          <div className="border-y border-gray-100 py-2 space-y-1">
+            <div className="text-xs font-bold uppercase tracking-wider text-gray-400 px-1 mb-1">Categories</div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {CATEGORY_ITEMS.map((cat) => {
+                const Icon = cat.icon
+                return (
+                  <Link
+                    key={cat.type}
+                    href={`/properties?type=${cat.type}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50 text-xs font-semibold text-gray-700 hover:bg-green-50 hover:text-[#16834B]"
+                  >
+                    <Icon className="w-3.5 h-3.5 text-[#16834B]" />
+                    <span className="truncate">{cat.name}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
           <Link
             href="/agents"
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
           >
-            <Users className="w-5 h-5 text-[#16834B]" />
+            <User className="w-5 h-5 text-[#16834B]" />
             <span>Agents Directory</span>
           </Link>
           <Link

@@ -4,9 +4,10 @@ import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import PropertyCard, { PropertyCardProps } from '@/components/PropertyCard'
 import PropertyFilters from '@/components/PropertyFilters'
+import LocationSearch from '@/components/LocationSearch'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, Building2 } from 'lucide-react'
+import { SlidersHorizontal, ChevronLeft, ChevronRight, Building2 } from 'lucide-react'
 
 function PropertiesContent() {
   const searchParams = useSearchParams()
@@ -37,7 +38,6 @@ function PropertiesContent() {
 
   useEffect(() => {
     let isSubscribed = true
-    setLoading(true)
 
     const queryParams = new URLSearchParams()
     if (filters.purpose) queryParams.set('purpose', filters.purpose)
@@ -75,11 +75,13 @@ function PropertiesContent() {
   }, [filters, sort, page])
 
   const handleFilterChange = (key: string, value: unknown) => {
+    setLoading(true)
     setFilters((prev) => ({ ...prev, [key]: value }))
     setPage(1)
   }
 
   const handleReset = () => {
+    setLoading(true)
     setFilters({
       purpose: '',
       type: '',
@@ -106,19 +108,26 @@ function PropertiesContent() {
       <div className="bg-[#16834B] py-8 px-4 sm:px-6 lg:px-8 text-white shadow-inner">
         <div className="max-w-7xl mx-auto space-y-4">
           <h1 className="text-2xl sm:text-3xl font-black">Search Properties in Pakistan</h1>
-          <p className="text-green-100 text-sm">Discover top residential houses, commercial plots, and apartments across major cities.</p>
+          <p className="text-green-100 text-sm">
+            Discover verified residential houses, commercial plots, and apartments across major cities.
+          </p>
 
-          <div className="bg-white p-2 rounded-xl shadow-lg flex flex-col sm:flex-row gap-2 items-center">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by area, society, city or title (e.g. Bahria Town, DHA, F-11)..."
-                value={filters.query}
-                onChange={(e) => handleFilterChange('query', e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#16834B]"
-              />
-            </div>
+          <div className="bg-white p-2 rounded-xl shadow-lg">
+            <LocationSearch
+              value={filters.city || filters.query}
+              onChangeText={(text) => {
+                handleFilterChange('city', '')
+                handleFilterChange('query', text)
+              }}
+              onSelectLocation={(loc) => {
+                handleFilterChange('city', loc.city)
+                if (loc.areaOrKeyword) {
+                  handleFilterChange('query', loc.areaOrKeyword)
+                }
+              }}
+              placeholder="Search by city, area, society or keyword (e.g. DHA, Johar Town, F-11)..."
+              inputClassName="py-3 text-sm bg-gray-50 border-0"
+            />
           </div>
         </div>
       </div>
@@ -140,6 +149,7 @@ function PropertiesContent() {
 
           <div className="flex items-center space-x-3">
             <button
+              type="button"
               onClick={() => setShowMobileFilters(!showMobileFilters)}
               className="lg:hidden flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg text-xs font-bold transition cursor-pointer"
             >
@@ -152,10 +162,11 @@ function PropertiesContent() {
               <select
                 value={sort}
                 onChange={(e) => {
+                  setLoading(true)
                   setSort(e.target.value)
                   setPage(1)
                 }}
-                className="bg-gray-50 border border-gray-300 text-gray-800 text-xs rounded-lg p-2 font-semibold focus:ring-2 focus:ring-[#16834B] focus:outline-none"
+                className="bg-gray-50 border border-gray-300 text-gray-800 text-xs rounded-lg p-2 font-semibold focus:ring-2 focus:ring-[#16834B] focus:outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="price_asc">Price: Low to High</option>
@@ -170,11 +181,7 @@ function PropertiesContent() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block lg:col-span-1">
-            <PropertyFilters
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onReset={handleReset}
-            />
+            <PropertyFilters filters={filters} onFilterChange={handleFilterChange} onReset={handleReset} />
           </div>
 
           {/* Mobile Filters Modal */}
@@ -184,17 +191,14 @@ function PropertiesContent() {
                 <div className="flex justify-between items-center border-b border-gray-100 pb-2">
                   <h3 className="font-bold text-gray-900">Filters</h3>
                   <button
+                    type="button"
                     onClick={() => setShowMobileFilters(false)}
-                    className="text-gray-500 font-bold text-sm"
+                    className="text-gray-500 font-bold text-sm cursor-pointer"
                   >
                     Close ✕
                   </button>
                 </div>
-                <PropertyFilters
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                  onReset={handleReset}
-                />
+                <PropertyFilters filters={filters} onFilterChange={handleFilterChange} onReset={handleReset} />
               </div>
             </div>
           )}
@@ -221,6 +225,7 @@ function PropertiesContent() {
                   We couldn&apos;t find any properties matching your current filter criteria. Try changing the location, price range, or clearing filters.
                 </p>
                 <button
+                  type="button"
                   onClick={handleReset}
                   className="bg-[#16834B] hover:bg-[#126b3d] text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer"
                 >
@@ -239,6 +244,7 @@ function PropertiesContent() {
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center space-x-2 pt-6">
                     <button
+                      type="button"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                       className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer"
@@ -249,6 +255,7 @@ function PropertiesContent() {
                       Page {page} of {totalPages}
                     </span>
                     <button
+                      type="button"
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
                       className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer"

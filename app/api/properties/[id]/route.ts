@@ -52,8 +52,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getSession()
-  if (!session || (session.role !== 'ADMIN' && session.role !== 'AGENT')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session) {
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
   }
 
   try {
@@ -66,6 +66,15 @@ export async function PUT(
 
     if (!existingProperty) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
+    // Authorization & Ownership Verification (Fix IDOR)
+    const isOwner = existingProperty.userId === session.id
+    const isAssignedAgent = Boolean(session.agentId && existingProperty.agentId === session.agentId)
+    const isAdmin = session.role === 'ADMIN'
+
+    if (!isAdmin && !isOwner && !isAssignedAgent) {
+      return NextResponse.json({ error: 'Forbidden: You do not have permission to modify this property' }, { status: 403 })
     }
 
     const {
@@ -113,12 +122,12 @@ export async function PUT(
         areaUnit,
         furnishing,
         parking: parking !== undefined ? Boolean(parking) : undefined,
-        isFeatured: isFeatured !== undefined ? Boolean(isFeatured) : undefined,
-        isVerified: isVerified !== undefined ? Boolean(isVerified) : undefined,
+        isFeatured: isAdmin ? (isFeatured !== undefined ? Boolean(isFeatured) : undefined) : undefined,
+        isVerified: isAdmin ? (isVerified !== undefined ? Boolean(isVerified) : undefined) : undefined,
         status,
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
-        agentId: agentId || undefined,
+        agentId: isAdmin ? (agentId || undefined) : undefined,
       },
     })
 
@@ -163,12 +172,29 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getSession()
-  if (!session || (session.role !== 'ADMIN' && session.role !== 'AGENT')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session) {
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
   }
 
   try {
     const { id } = await params
+
+    const existingProperty = await prisma.property.findUnique({
+      where: { id },
+    })
+
+    if (!existingProperty) {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
+    // Authorization & Ownership Verification (Fix IDOR)
+    const isOwner = existingProperty.userId === session.id
+    const isAssignedAgent = Boolean(session.agentId && existingProperty.agentId === session.agentId)
+    const isAdmin = session.role === 'ADMIN'
+
+    if (!isAdmin && !isOwner && !isAssignedAgent) {
+      return NextResponse.json({ error: 'Forbidden: You do not have permission to delete this property' }, { status: 403 })
+    }
 
     await prisma.property.delete({
       where: { id },

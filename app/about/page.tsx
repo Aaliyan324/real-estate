@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { Building2, ShieldCheck, Target, Award, Users } from 'lucide-react'
+import { ShieldCheck, Target, Users } from 'lucide-react'
 
 export const metadata = {
   title: 'About Us | PakHaven Real Estate',

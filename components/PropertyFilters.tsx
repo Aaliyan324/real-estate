@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Filter, RotateCcw } from 'lucide-react'
+import LocationSearch from '@/components/LocationSearch'
 
 interface PropertyFiltersProps {
   filters: {
@@ -22,13 +23,11 @@ interface PropertyFiltersProps {
   onReset: () => void
 }
 
-const PAKISTAN_CITIES = ['Lahore', 'Islamabad', 'Karachi', 'Rawalpindi', 'Faisalabad', 'Multan', 'Sahiwal', 'Gujranwala', 'Peshawar', 'Quetta']
-
 const PROPERTY_TYPES = [
   { label: 'All Types', value: '' },
   { label: 'House', value: 'HOUSE' },
-  { label: 'Apartment', value: 'APARTMENT' },
-  { label: 'Plot', value: 'PLOT' },
+  { label: 'Apartment / Flat', value: 'APARTMENT' },
+  { label: 'Plot & Land', value: 'PLOT' },
   { label: 'Commercial', value: 'COMMERCIAL' },
   { label: 'Office', value: 'OFFICE' },
   { label: 'Shop', value: 'SHOP' },
@@ -44,6 +43,7 @@ export default function PropertyFilters({ filters, onFilterChange, onReset }: Pr
           <span>Filter Properties</span>
         </div>
         <button
+          type="button"
           onClick={onReset}
           className="text-xs font-semibold text-gray-500 hover:text-[#16834B] flex items-center space-x-1 cursor-pointer"
         >
@@ -86,21 +86,23 @@ export default function PropertyFilters({ filters, onFilterChange, onReset }: Pr
         </div>
       </div>
 
-      {/* City */}
+      {/* OLX-Style Location Autocomplete */}
       <div>
-        <label className="block text-xs font-bold uppercase text-gray-500 mb-1.5">City</label>
-        <div className="relative">
-          <select
-            value={filters.city}
-            onChange={(e) => onFilterChange('city', e.target.value)}
-            className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
-          >
-            <option value="">All Pakistan Cities</option>
-            {PAKISTAN_CITIES.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
-        </div>
+        <label className="block text-xs font-bold uppercase text-gray-500 mb-1.5">Location / City / Area</label>
+        <LocationSearch
+          value={filters.city || filters.query}
+          onChangeText={(text) => {
+            onFilterChange('city', '')
+            onFilterChange('query', text)
+          }}
+          onSelectLocation={(loc) => {
+            onFilterChange('city', loc.city)
+            if (loc.areaOrKeyword) {
+              onFilterChange('query', loc.areaOrKeyword)
+            }
+          }}
+          placeholder="Search city, area, society..."
+        />
       </div>
 
       {/* Property Type */}
@@ -109,10 +111,12 @@ export default function PropertyFilters({ filters, onFilterChange, onReset }: Pr
         <select
           value={filters.type}
           onChange={(e) => onFilterChange('type', e.target.value)}
-          className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
+          className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
         >
           {PROPERTY_TYPES.map((pt) => (
-            <option key={pt.value} value={pt.value}>{pt.label}</option>
+            <option key={pt.value} value={pt.value}>
+              {pt.label}
+            </option>
           ))}
         </select>
       </div>

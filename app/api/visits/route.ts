@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { Prisma } from '@prisma/client'
 
-export async function GET(request: Request) {
+export async function GET() {
   const session = await getSession()
   if (!session || (session.role !== 'ADMIN' && session.role !== 'AGENT')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
+    const where: Prisma.PropertyVisitWhereInput = {}
+    if (session.role === 'AGENT' && session.agentId) {
+      where.property = {
+        OR: [
+          { agentId: session.agentId },
+          { userId: session.id },
+        ],
+      }
+    }
+
     const visits = await prisma.propertyVisit.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
       include: {
         property: {

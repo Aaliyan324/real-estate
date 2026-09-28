@@ -58,7 +58,7 @@ function LoginContent() {
               <Building2 className="w-6 h-6" />
             </div>
             <h1 className="text-2xl font-black text-gray-900">Sign In to PakHaven</h1>
-            <p className="text-xs text-gray-500">Enter your credentials to manage listings and favorites.</p>
+            <p className="text-xs text-gray-500">Enter your email and password to access your account.</p>
           </div>
 
           {error && <div className="p-3 bg-red-50 text-red-600 text-xs rounded-lg">{error}</div>}
@@ -71,7 +71,7 @@ function LoginContent() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@pakhaven.pk or agent email"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none font-medium"
@@ -86,7 +86,7 @@ function LoginContent() {
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-9 bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none font-medium"
