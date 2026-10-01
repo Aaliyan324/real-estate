@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { inquiryRepository } from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { Prisma } from '@prisma/client'
 
 export async function GET() {
   const session = await getSession()
@@ -10,22 +9,8 @@ export async function GET() {
   }
 
   try {
-    const where: Prisma.InquiryWhereInput = {}
-    if (session.role === 'AGENT' && session.agentId) {
-      where.agentId = session.agentId
-    }
-
-    const inquiries = await prisma.inquiry.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        property: {
-          select: { id: true, title: true, slug: true, price: true, city: true },
-        },
-        agent: {
-          select: { id: true, name: true, agency: true },
-        },
-      },
+    const inquiries = await inquiryRepository.listForSession({
+      agentId: session.role === 'AGENT' ? session.agentId : null,
     })
 
     return NextResponse.json({ inquiries })
@@ -43,16 +28,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name, email, phone, and message are required' }, { status: 400 })
     }
 
-    const inquiry = await prisma.inquiry.create({
-      data: {
-        propertyId: propertyId || null,
-        agentId: agentId || null,
-        name,
-        email,
-        phone,
-        message,
-        status: 'NEW',
-      },
+    const inquiry = await inquiryRepository.create({
+      propertyId: propertyId || null,
+      agentId: agentId || null,
+      name,
+      email,
+      phone,
+      message,
     })
 
     return NextResponse.json({ success: true, inquiry })

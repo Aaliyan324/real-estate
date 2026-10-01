@@ -1,11 +1,18 @@
-// MySQL / MariaDB schema (DEFAULT: local dev + Hostinger target).
+// PostgreSQL / Neon schema (Vercel target).
 //
-// Prisma providers are a schema/build-time concern and cannot be switched at
-// runtime. This is the schema `prisma generate`/`db push` use by default.
-// For PostgreSQL/Neon (Vercel) use prisma/schema.postgresql.prisma instead.
-// See DATABASE.md.
+// This file is IDENTICAL to prisma/schema.prisma (the MySQL/MariaDB default
+// used for Hostinger/local) except for the datasource `provider`. Prisma cannot
+// switch providers at runtime, so generate/deploy against whichever schema
+// matches your DATABASE_URL:
+//
+//   MySQL/MariaDB:  npx prisma generate --schema=prisma/schema.prisma
+//   Postgres/Neon:  npx prisma generate --schema=prisma/schema.postgresql.prisma
+//
+// For Neon connection pooling you may point DATABASE_URL at the pooled
+// ("-pooler") host and, for DDL (db push/migrate), add a directUrl = env("DIRECT_URL")
+// line + a DIRECT_URL env var. See DATABASE.md.
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

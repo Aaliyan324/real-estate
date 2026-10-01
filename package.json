@@ -6,10 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma",
+    "prisma:generate:postgres": "prisma generate --schema=prisma/schema.postgresql.prisma",
+    "db:push": "prisma db push --schema=prisma/schema.prisma",
+    "db:push:postgres": "prisma db push --schema=prisma/schema.postgresql.prisma",
+    "db:seed": "prisma db seed",
+    "vercel-build": "prisma generate --schema=prisma/schema.postgresql.prisma && next build"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.3",
     "html2canvas": "^1.4.1",
     "jose": "^6.2.12",

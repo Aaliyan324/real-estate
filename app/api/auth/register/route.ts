@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { userRepository, agentRepository } from '@/lib/db'
 import { hashPassword, createSession } from '@/lib/auth'
 import { Role } from '@prisma/client'
 
@@ -21,9 +21,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name, email, and password are required' }, { status: 400 })
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    })
+    const existingUser = await userRepository.findByEmail(email.toLowerCase().trim())
 
     if (existingUser) {
       return NextResponse.json({ error: 'An account with this email already exists' }, { status: 400 })
@@ -32,14 +30,12 @@ export async function POST(request: Request) {
     const hashedPassword = await hashPassword(password)
     const userRole = role === 'AGENT' ? Role.AGENT : Role.USER
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email: email.toLowerCase().trim(),
-        password: hashedPassword,
-        phone: phone || null,
-        role: userRole,
-      },
+    const user = await userRepository.create({
+      name,
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      phone: phone || null,
+      role: userRole,
     })
 
     let agentId: string | null = null
@@ -49,22 +45,20 @@ export async function POST(request: Request) {
       let slug = slugBase
       let counter = 1
 
-      while (await prisma.agent.findUnique({ where: { slug } })) {
+      while (await agentRepository.findBySlug(slug)) {
         slug = `${slugBase}-${counter}`
         counter++
       }
 
-      const agent = await prisma.agent.create({
-        data: {
-          userId: user.id,
-          name: user.name,
-          slug,
-          email: user.email,
-          phone: phone || '+92 300 0000000',
-          whatsapp: phone ? phone.replace(/[^0-9]/g, '') : '923000000000',
-          agency: agencyName || `${name} Real Estate`,
-          isVerified: false,
-        },
+      const agent = await agentRepository.create({
+        userId: user.id,
+        name: user.name,
+        slug,
+        email: user.email,
+        phone: phone || '+92 300 0000000',
+        whatsapp: phone ? phone.replace(/[^0-9]/g, '') : '923000000000',
+        agency: agencyName || `${name} Real Estate`,
+        isVerified: false,
       })
       agentId = agent.id
     }

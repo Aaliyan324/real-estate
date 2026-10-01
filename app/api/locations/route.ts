@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { propertyRepository } from '@/lib/db'
 import { searchLocations, LocationItem } from '@/lib/locationsData'
 
 export async function GET(request: Request) {
@@ -19,21 +19,7 @@ export async function GET(request: Request) {
     // 2. Dynamic DB locations matching query
     const dbSuggestions: LocationItem[] = []
     try {
-      const dbProperties = await prisma.property.findMany({
-        where: {
-          OR: [
-            { city: { contains: cleanQ } },
-            { area: { contains: cleanQ } },
-            { society: { contains: cleanQ } },
-          ],
-        },
-        select: {
-          city: true,
-          area: true,
-          society: true,
-        },
-        take: 15,
-      })
+      const dbProperties = await propertyRepository.findLocationsByQuery(cleanQ)
 
       const seen = new Set<string>()
 

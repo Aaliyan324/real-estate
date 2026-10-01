@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { userRepository } from '@/lib/db'
 import { comparePassword, createSession } from '@/lib/auth'
 
 export async function POST(request: Request) {
@@ -10,14 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-      include: {
-        agent: {
-          select: { id: true },
-        },
-      },
-    })
+    const user = await userRepository.findByEmailWithAgent(email.toLowerCase().trim())
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })

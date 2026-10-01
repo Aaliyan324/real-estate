@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
-import { prisma } from './prisma'
+import { userRepository } from './db'
 import { Role } from '@prisma/client'
 
 const SECRET_KEY = process.env.AUTH_SECRET || 'dev-secret-key-real-estate-pakistan-2026-secure'
@@ -74,21 +74,8 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   if (!session?.id) return null
   
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: session.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        phone: true,
-        avatar: true,
-        agent: {
-          select: { id: true }
-        }
-      }
-    })
-    
+    const user = await userRepository.findSessionUser(session.id)
+
     if (!user) return null
     return {
       id: user.id,

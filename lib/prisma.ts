@@ -1,13 +1,8 @@
-import { PrismaClient } from '@prisma/client'
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+/**
+ * Backwards-compatible re-export.
+ *
+ * The canonical Prisma singleton now lives in `lib/db/client.ts`. Business
+ * logic should prefer the repository layer in `lib/db` over importing the raw
+ * client. This shim exists so existing `@/lib/prisma` imports keep resolving.
+ */
+export { prisma } from './db/client'

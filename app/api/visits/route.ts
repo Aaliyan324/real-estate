@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { appointmentRepository } from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { Prisma } from '@prisma/client'
 
 export async function GET() {
   const session = await getSession()
@@ -10,24 +9,9 @@ export async function GET() {
   }
 
   try {
-    const where: Prisma.PropertyVisitWhereInput = {}
-    if (session.role === 'AGENT' && session.agentId) {
-      where.property = {
-        OR: [
-          { agentId: session.agentId },
-          { userId: session.id },
-        ],
-      }
-    }
-
-    const visits = await prisma.propertyVisit.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        property: {
-          select: { id: true, title: true, slug: true, city: true, address: true },
-        },
-      },
+    const visits = await appointmentRepository.listForSession({
+      agentId: session.role === 'AGENT' ? session.agentId : null,
+      userId: session.id,
     })
 
     return NextResponse.json({ visits })
@@ -47,18 +31,15 @@ export async function POST(request: Request) {
 
     const session = await getSession()
 
-    const visit = await prisma.propertyVisit.create({
-      data: {
-        propertyId,
-        userId: session?.id || null,
-        name,
-        email,
-        phone,
-        preferredDate: new Date(preferredDate),
-        preferredTime: preferredTime || '10:00 AM',
-        message: message || null,
-        status: 'PENDING',
-      },
+    const visit = await appointmentRepository.create({
+      propertyId,
+      userId: session?.id || null,
+      name,
+      email,
+      phone,
+      preferredDate: new Date(preferredDate),
+      preferredTime: preferredTime || '10:00 AM',
+      message: message || null,
     })
 
     return NextResponse.json({ success: true, visit })

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { propertyRepository } from '@/lib/db'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PropertyDetailsClient from './PropertyDetailsClient'
@@ -16,10 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
 
   try {
-    const property = await prisma.property.findFirst({
-      where: { OR: [{ slug }, { id: slug }] },
-      include: { images: true },
-    })
+    const property = await propertyRepository.getBySlugForMeta(slug)
 
     if (!property) {
       return {
@@ -51,14 +48,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
   let property = null
   try {
-    property = await prisma.property.findFirst({
-      where: { OR: [{ slug }, { id: slug }] },
-      include: {
-        images: { orderBy: { sortOrder: 'asc' } },
-        features: true,
-        agent: true,
-      },
-    })
+    property = await propertyRepository.getBySlugForDetails(slug)
   } catch (err) {
     console.error(err)
   }

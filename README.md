@@ -72,3 +72,45 @@ Designed for high performance, accessibility, SEO optimization, and seamless Hos
 
 * [LOCAL_SETUP.md](LOCAL_SETUP.md) — Detailed local environment guide.
 * [deployment.md](deployment.md) — Hostinger production deployment & MariaDB backup instructions.
+* [DATABASE.md](DATABASE.md) — Dual-database (MySQL/MariaDB ↔ PostgreSQL/Neon) architecture.
+* [DEPLOYMENT-VERCEL.md](DEPLOYMENT-VERCEL.md) — Deploy to Vercel + Neon.
+* [DEPLOYMENT-HOSTINGER.md](DEPLOYMENT-HOSTINGER.md) — Deploy to Hostinger + MySQL/MariaDB.
+* [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — Common issues across both targets.
+
+---
+
+## ☁️ Vercel Deployment
+
+* **Database:** Neon PostgreSQL
+* **Hosting:** Vercel
+* **Steps:**
+  1. Create a Neon database (use the pooled `-pooler` URL for runtime).
+  2. Set `DATABASE_URL` (postgresql://) plus `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`, and `BLOB_READ_WRITE_TOKEN`.
+  3. Generate the Prisma client from `prisma/schema.postgresql.prisma` (`npm run prisma:generate:postgres`).
+  4. Apply the schema safely with `npm run db:push:postgres` (never reset a populated DB).
+  5. Push the project to GitHub.
+  6. Import the repository into Vercel.
+  7. Add the environment variables above.
+  8. Build command `npm run vercel-build`, then deploy.
+  9. Test production (search, property details, uploads, admin).
+
+Full guide: [DEPLOYMENT-VERCEL.md](DEPLOYMENT-VERCEL.md).
+
+---
+
+## 🖥️ Hostinger Deployment
+
+* **Database:** MySQL / MariaDB (project default)
+* **Hosting:** Hostinger
+* **Steps:**
+  1. Create a MySQL database in hPanel.
+  2. Create a database user and grant privileges.
+  3. Configure `DATABASE_URL` (mysql://) using the hPanel host — do not assume `localhost` in production.
+  4. Generate the Prisma client (`npm run prisma:generate`).
+  5. Apply the schema with `npm run db:push` (additive, preserves data).
+  6. Build Next.js (`npm run build`) and deploy on a Node/VPS plan.
+  7. Configure the domain and SSL.
+  8. Set `NEXT_PUBLIC_SITE_URL` to the public origin.
+  9. Test production.
+
+Full guide: [DEPLOYMENT-HOSTINGER.md](DEPLOYMENT-HOSTINGER.md).

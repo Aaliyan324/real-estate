@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { agentRepository } from '@/lib/db'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PropertyCard from '@/components/PropertyCard'
@@ -16,9 +16,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   try {
-    const agent = await prisma.agent.findFirst({
-      where: { OR: [{ slug }, { id: slug }] },
-    })
+    const agent = await agentRepository.getBySlugForMeta(slug)
 
     if (!agent) {
       return { title: 'Agent Profile | PakHaven' }
@@ -38,16 +36,7 @@ export default async function AgentProfilePage({ params }: Props) {
 
   let agent = null
   try {
-    agent = await prisma.agent.findFirst({
-      where: { OR: [{ slug }, { id: slug }] },
-      include: {
-        properties: {
-          where: { status: 'PUBLISHED' },
-          include: { images: true },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
-    })
+    agent = await agentRepository.getBySlugWithProperties(slug)
   } catch (err) {
     console.error(err)
   }

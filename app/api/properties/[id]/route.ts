@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { propertyRepository } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 
 export async function GET(
@@ -9,32 +9,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    const property = await prisma.property.findFirst({
-      where: {
-        OR: [{ id }, { slug: id }],
-      },
-      include: {
-        images: {
-          orderBy: { sortOrder: 'asc' },
-        },
-        features: true,
-        agent: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            email: true,
-            phone: true,
-            whatsapp: true,
-            agency: true,
-            agencyLogo: true,
-            bio: true,
-            photo: true,
-            isVerified: true,
-          },
-        },
-      },
-    })
+    const property = await propertyRepository.getByIdOrSlug(id)
 
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
@@ -60,9 +35,7 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
-    const existingProperty = await prisma.property.findUnique({
-      where: { id },
-    })
+    const existingProperty = await propertyRepository.findUnique(id)
 
     if (!existingProperty) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
@@ -104,61 +77,41 @@ export async function PUT(
     } = body
 
     // Update main fields
-    await prisma.property.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        purpose,
-        propertyType,
-        price: price !== undefined ? parseFloat(price) : undefined,
-        city,
-        area,
-        society,
-        address,
-        bedrooms: bedrooms !== undefined ? parseInt(bedrooms, 10) : undefined,
-        bathrooms: bathrooms !== undefined ? parseInt(bathrooms, 10) : undefined,
-        areaSize: areaSize !== undefined ? parseFloat(areaSize) : undefined,
-        areaUnit,
-        furnishing,
-        parking: parking !== undefined ? Boolean(parking) : undefined,
-        isFeatured: isAdmin ? (isFeatured !== undefined ? Boolean(isFeatured) : undefined) : undefined,
-        isVerified: isAdmin ? (isVerified !== undefined ? Boolean(isVerified) : undefined) : undefined,
-        status,
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
-        agentId: isAdmin ? (agentId || undefined) : undefined,
-      },
+    await propertyRepository.update(id, {
+      title,
+      description,
+      purpose,
+      propertyType,
+      price: price !== undefined ? parseFloat(price) : undefined,
+      city,
+      area,
+      society,
+      address,
+      bedrooms: bedrooms !== undefined ? parseInt(bedrooms, 10) : undefined,
+      bathrooms: bathrooms !== undefined ? parseInt(bathrooms, 10) : undefined,
+      areaSize: areaSize !== undefined ? parseFloat(areaSize) : undefined,
+      areaUnit,
+      furnishing,
+      parking: parking !== undefined ? Boolean(parking) : undefined,
+      isFeatured: isAdmin ? (isFeatured !== undefined ? Boolean(isFeatured) : undefined) : undefined,
+      isVerified: isAdmin ? (isVerified !== undefined ? Boolean(isVerified) : undefined) : undefined,
+      status,
+      latitude: latitude ? parseFloat(latitude) : null,
+      longitude: longitude ? parseFloat(longitude) : null,
+      agentId: isAdmin ? (agentId || undefined) : undefined,
     })
 
     // If new images provided, update relations
     if (Array.isArray(images)) {
-      await prisma.propertyImage.deleteMany({ where: { propertyId: id } })
-      await prisma.propertyImage.createMany({
-        data: images.map((url: string, index: number) => ({
-          propertyId: id,
-          url,
-          isMain: index === 0,
-          sortOrder: index,
-        })),
-      })
+      await propertyRepository.replaceImages(id, images)
     }
 
     // If new features provided, update relations
     if (Array.isArray(features)) {
-      await prisma.propertyFeature.deleteMany({ where: { propertyId: id } })
-      await prisma.propertyFeature.createMany({
-        data: features.map((name: string) => ({
-          propertyId: id,
-          name,
-        })),
-      })
+      await propertyRepository.replaceFeatures(id, features)
     }
 
-    const updated = await prisma.property.findUnique({
-      where: { id },
-      include: { images: true, features: true, agent: true },
-    })
+    const updated = await propertyRepository.getWithRelations(id)
 
     return NextResponse.json({ success: true, property: updated })
   } catch (error) {
@@ -179,9 +132,7 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const existingProperty = await prisma.property.findUnique({
-      where: { id },
-    })
+    const existingProperty = await propertyRepository.findUnique(id)
 
     if (!existingProperty) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
@@ -196,9 +147,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden: You do not have permission to delete this property' }, { status: 403 })
     }
 
-    await prisma.property.delete({
-      where: { id },
-    })
+    await propertyRepository.delete(id)
 
     return NextResponse.json({ success: true })
   } catch (error) {

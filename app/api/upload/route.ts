@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
 import { getSession } from '@/lib/auth'
+import { getStorageDriver } from '@/lib/storage'
+
+const MAX_SIZE = 5 * 1024 * 1024 // 5MB
 
 export async function POST(request: Request) {
   const session = await getSession()
@@ -17,9 +18,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No files uploaded' }, { status: 400 })
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'properties')
-    await mkdir(uploadDir, { recursive: true })
-
+    const storage = getStorageDriver()
     const savedUrls: string[] = []
 
     for (const file of files) {
@@ -27,21 +26,15 @@ export async function POST(request: Request) {
         continue
       }
 
-      // Max size: 5MB
-      if (file.size > 5 * 1024 * 1024) {
-        return NextResponse.json({ error: `File ${file.name} exceeds maximum allowed size of 5MB` }, { status: 400 })
+      if (file.size > MAX_SIZE) {
+        return NextResponse.json(
+          { error: `File ${file.name} exceeds maximum allowed size of 5MB` },
+          { status: 400 },
+        )
       }
 
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      const ext = path.extname(file.name) || '.jpg'
-      const sanitizedName = file.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}-${sanitizedName}${ext}`
-      const filePath = path.join(uploadDir, fileName)
-
-      await writeFile(filePath, buffer)
-      savedUrls.push(`/uploads/properties/${fileName}`)
+      const { url } = await storage.upload(file)
+      savedUrls.push(url)
     }
 
     return NextResponse.json({ success: true, urls: savedUrls })

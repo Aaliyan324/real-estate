@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { agentRepository } from '@/lib/db'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { ShieldCheck, MessageCircle } from 'lucide-react'
@@ -20,6 +20,7 @@ interface AgentItem {
   phone: string
   whatsapp: string | null
   photo: string | null
+  bio: string | null
   isVerified: boolean
   _count: { properties: number }
 }
@@ -27,14 +28,7 @@ interface AgentItem {
 export default async function AgentsPage() {
   let agents: AgentItem[] = []
   try {
-    agents = await prisma.agent.findMany({
-      orderBy: { isVerified: 'desc' },
-      include: {
-        _count: {
-          select: { properties: true },
-        },
-      },
-    })
+    agents = await agentRepository.listWithCount()
   } catch (err) {
     console.error('Agents page DB error:', err)
   }

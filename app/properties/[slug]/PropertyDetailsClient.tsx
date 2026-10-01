@@ -88,8 +88,9 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
   const [inquirySuccess, setInquirySuccess] = useState(false)
   const [inquiryError, setInquiryError] = useState<string | null>(null)
 
-  const images = property.images.map((img) => img.url)
+  const images = property.images?.map((img) => img.url) ?? []
   const fallbackImage = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&auto=format&fit=crop&q=80'
+  const activeImage = images[activeImageIndex] ?? images[0] ?? fallbackImage
 
   const whatsappNum = property.agent?.whatsapp || property.agent?.phone?.replace(/[^0-9]/g, '') || '+9242111222333'.replace(/[^0-9]/g, '')
   const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(`Hello, I am interested in "${property.title}" (${formatPKRPrice(property.price)}) listed on PakHaven.`)}`
@@ -227,7 +228,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
             {/* Main Stage Image */}
             <div className="relative aspect-16/9 w-full rounded-xl overflow-hidden bg-gray-900 group">
               <img
-                src={images[activeImageIndex] || fallbackImage}
+                src={activeImage}
                 alt={`${property.title} photo ${activeImageIndex + 1}`}
                 className="w-full h-full object-cover transition-all duration-300"
               />
@@ -451,7 +452,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
           </button>
           <div className="max-w-5xl max-h-[85vh] overflow-hidden flex items-center justify-center">
             <img
-              src={images[activeImageIndex] || fallbackImage}
+              src={activeImage}
               alt={`Fullscreen ${activeImageIndex}`}
               className="max-w-full max-h-[85vh] object-contain rounded-lg"
             />

@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { prisma } from '@/lib/prisma'
+import { propertyRepository, agentRepository } from '@/lib/db'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
@@ -44,10 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    const properties = await prisma.property.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { slug: true, updatedAt: true },
-    })
+    const properties = await propertyRepository.findPublishedForSitemap()
 
     const propertyRoutes: MetadataRoute.Sitemap = properties.map((prop) => ({
       url: `${baseUrl}/properties/${prop.slug}`,
@@ -56,9 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-    const agents = await prisma.agent.findMany({
-      select: { slug: true, updatedAt: true },
-    })
+    const agents = await agentRepository.listForSitemap()
 
     const agentRoutes: MetadataRoute.Sitemap = agents.map((agt) => ({
       url: `${baseUrl}/agents/${agt.slug}`,

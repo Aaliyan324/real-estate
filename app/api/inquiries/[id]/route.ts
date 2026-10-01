@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { inquiryRepository } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { InquiryStatus } from '@prisma/client'
 
 export async function PUT(
   request: Request,
@@ -15,9 +16,7 @@ export async function PUT(
     const { id } = await params
     const { status } = await request.json()
 
-    const existingInquiry = await prisma.inquiry.findUnique({
-      where: { id },
-    })
+    const existingInquiry = await inquiryRepository.findById(id)
 
     if (!existingInquiry) {
       return NextResponse.json({ error: 'Inquiry not found' }, { status: 404 })
@@ -29,10 +28,7 @@ export async function PUT(
       }
     }
 
-    const updated = await prisma.inquiry.update({
-      where: { id },
-      data: { status },
-    })
+    const updated = await inquiryRepository.updateStatus(id, status as InquiryStatus)
 
     return NextResponse.json({ success: true, inquiry: updated })
   } catch (error) {

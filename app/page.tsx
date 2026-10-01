@@ -2,9 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import PropertyCard from '@/components/PropertyCard'
+import PropertyCard, { PropertyCardProps } from '@/components/PropertyCard'
 import HeroSearch from '@/components/HeroSearch'
-import { prisma } from '@/lib/prisma'
+import { propertyRepository } from '@/lib/db'
 import {
   ShieldCheck,
   Users,
@@ -46,21 +46,7 @@ const POPULAR_LOCATIONS = [
 export default async function HomePage() {
   let featuredProperties: PropertyCardProps['property'][] = []
   try {
-    featuredProperties = await prisma.property.findMany({
-      where: { status: 'PUBLISHED', isFeatured: true },
-      take: 6,
-      orderBy: { createdAt: 'desc' },
-      include: { images: true },
-    })
-
-    if (featuredProperties.length === 0) {
-      featuredProperties = await prisma.property.findMany({
-        where: { status: 'PUBLISHED' },
-        take: 6,
-        orderBy: { createdAt: 'desc' },
-        include: { images: true },
-      })
-    }
+    featuredProperties = await propertyRepository.findFeaturedForHome(6)
   } catch (err) {
     console.error('Homepage fetch error:', err)
   }
