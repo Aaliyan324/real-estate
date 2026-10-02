@@ -21,4 +21,4 @@ export function getStorageDriver(): StorageDriver {
 
 export type { StorageDriver, StoredFile } from './types'
 export { localStorageDriver } from './local'
-export { vercelBlobStorageDriver } from './vercel-blob'
+export { vercelBlobStorageDriver, BlobConfigError } from './vercel-blob'

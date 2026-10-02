@@ -12,6 +12,20 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // If a preview thumbnail cannot load (e.g. a private blob that is temporarily
+  // unreachable, or a missing file), degrade gracefully instead of showing a
+  // broken image icon. Guarded to avoid an onError reload loop.
+  const handlePreviewError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    if (!img.src.startsWith('data:')) {
+      img.src =
+        'data:image/svg+xml;utf8,' +
+        encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" font-family="sans-serif" font-size="12" fill="#9ca3af" text-anchor="middle" dominant-baseline="middle">No preview</text></svg>`,
+        )
+    }
+  }
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -91,7 +105,7 @@ export default function ImageUploader({ images, onChange }: ImageUploaderProps) 
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-2">
           {images.map((url, idx) => (
             <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-4/3 bg-gray-100">
-              <img src={url} alt={`Property preview ${idx}`} className="w-full h-full object-cover" />
+              <img src={url} alt={`Property preview ${idx}`} className="w-full h-full object-cover" onError={handlePreviewError} />
               <div className="absolute top-1 right-1 flex space-x-1">
                 <button
                   type="button"

@@ -92,6 +92,15 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
   const fallbackImage = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&auto=format&fit=crop&q=80'
   const activeImage = images[activeImageIndex] ?? images[0] ?? fallbackImage
 
+  // Swaps an inaccessible/broken image (e.g. a private blob that could not be
+  // proxied) to the placeholder without risking an onError reload loop.
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    if (!img.src.includes('images.unsplash.com')) {
+      img.src = fallbackImage
+    }
+  }
+
   const whatsappNum = property.agent?.whatsapp || property.agent?.phone?.replace(/[^0-9]/g, '') || '+9242111222333'.replace(/[^0-9]/g, '')
   const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(`Hello, I am interested in "${property.title}" (${formatPKRPrice(property.price)}) listed on PakHaven.`)}`
 
@@ -231,6 +240,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
                 src={activeImage}
                 alt={`${property.title} photo ${activeImageIndex + 1}`}
                 className="w-full h-full object-cover transition-all duration-300"
+                onError={handleImageError}
               />
               <button
                 onClick={() => setLightboxOpen(true)}
@@ -455,6 +465,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
               src={activeImage}
               alt={`Fullscreen ${activeImageIndex}`}
               className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              onError={handleImageError}
             />
           </div>
         </div>

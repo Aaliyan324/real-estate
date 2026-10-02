@@ -5,6 +5,18 @@ import Link from 'next/link'
 import { Bed, Bath, Maximize2, MapPin, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
 import { formatPKRPrice, formatAreaUnit } from '@/lib/utils'
 
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop&q=80'
+
+// Swaps an inaccessible/broken image (e.g. a private blob that could not be
+// proxied) to the placeholder without risking an onError reload loop.
+function handleImageError(e: React.SyntheticEvent<HTMLImageElement>) {
+  const img = e.currentTarget
+  if (!img.src.includes('images.unsplash.com')) {
+    img.src = FALLBACK_IMAGE
+  }
+}
+
 export interface PropertyCardProps {
   property: {
     id: string
@@ -66,7 +78,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const mainImage =
     property.images && property.images.length > 0
       ? property.images[0].url
-      : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop&q=80'
+      : FALLBACK_IMAGE
 
   return (
     <Link
@@ -80,6 +92,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
+          onError={handleImageError}
         />
 
         {/* Badges */}

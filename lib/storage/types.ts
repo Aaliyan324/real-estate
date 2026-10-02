@@ -8,7 +8,14 @@
  * property functionality. See lib/storage/index.ts for driver selection.
  */
 export interface StoredFile {
+  /** Value persisted in `PropertyImage.url` and used as the browser `<img src>`. */
   url: string
+  /**
+   * Blob pathname/key, returned only by remote drivers whose storage is
+   * private (e.g. Vercel Blob). Not needed by the local filesystem driver, so
+   * it is optional to stay backwards-compatible.
+   */
+  pathname?: string
 }
 
 export interface StorageDriver {

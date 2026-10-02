@@ -21,13 +21,23 @@ export interface PropertyListFilters {
   maxArea?: number
   isFeatured?: boolean
   isVerified?: boolean
-  status?: PropertyStatus | null
+  /**
+   * One or more statuses. When omitted (or empty) the listing defaults to
+   * PUBLISHED so the public API never leaks drafts. A single value or an array
+   * is accepted; both are issued as a provider-safe `{ in: [...] }` filter that
+   * behaves identically on MySQL/MariaDB and PostgreSQL/Neon.
+   */
+  status?: PropertyStatus | PropertyStatus[] | null
   sort?: string
 }
 
 function buildListWhere(filters: PropertyListFilters): Prisma.PropertyWhereInput {
+  const statuses = (
+    Array.isArray(filters.status) ? filters.status : filters.status ? [filters.status] : []
+  ).filter(Boolean)
+
   const where: Prisma.PropertyWhereInput = {
-    status: filters.status || PropertyStatus.PUBLISHED,
+    status: { in: statuses.length > 0 ? statuses : [PropertyStatus.PUBLISHED] },
   }
 
   if (filters.purpose) where.purpose = filters.purpose

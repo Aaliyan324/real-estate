@@ -13,6 +13,8 @@ function slugify(text: string) {
     .replace(/\-\-+/g, '-')
 }
 
+const VALID_STATUSES = Object.values(PropertyStatus) as string[]
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -33,10 +35,39 @@ export async function GET(request: Request) {
     const maxArea = searchParams.get('maxArea') ? parseFloat(searchParams.get('maxArea')!) : undefined
     const isFeatured = searchParams.get('featured') === 'true' ? true : undefined
     const isVerified = searchParams.get('verified') === 'true' ? true : undefined
-    const statusParam = searchParams.get('status') as PropertyStatus | null
     const sort = searchParams.get('sort') || 'newest'
 
-    // Public API defaults to PUBLISHED unless admin specifies status.
+    // The `status` filter is a comma-separated list (e.g. the admin dashboard
+    // requests DRAFT,PUBLISHED,SOLD,RENTED,ARCHIVED). Parse and validate it so
+    // an invalid enum literal never reaches Prisma (which would throw a 500).
+    // Non-authenticated callers may only ever see PUBLISHED listings.
+    const session = await getSession()
+    const canViewNonPublished = session?.role === 'ADMIN' || session?.role === 'AGENT'
+
+    let statusFilter: PropertyStatus[] | undefined
+    const rawStatus = searchParams.get('status')
+    if (rawStatus) {
+      const tokens = rawStatus
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+
+      const invalid = tokens.filter((t) => !VALID_STATUSES.includes(t))
+      if (invalid.length > 0) {
+        return NextResponse.json(
+          { error: `Invalid status value(s): ${invalid.join(', ')}` },
+          { status: 400 },
+        )
+      }
+
+      let parsed = tokens as PropertyStatus[]
+      if (!canViewNonPublished) {
+        parsed = parsed.filter((s) => s === PropertyStatus.PUBLISHED)
+      }
+      statusFilter = parsed.length > 0 ? parsed : [PropertyStatus.PUBLISHED]
+    }
+
+    // Public API defaults to PUBLISHED unless an admin/agent specifies status.
     const { properties, pagination } = await propertyRepository.list({
       page,
       limit,
@@ -53,7 +84,7 @@ export async function GET(request: Request) {
       maxArea,
       isFeatured,
       isVerified,
-      status: statusParam,
+      status: statusFilter ?? null,
       sort,
     })
 
