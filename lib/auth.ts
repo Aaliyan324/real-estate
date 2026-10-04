@@ -16,6 +16,9 @@ export interface SessionUser {
   phone?: string | null
   avatar?: string | null
   agentId?: string | null
+  providerId?: string | null
+  providerVerificationStatus?: string | null
+  isBlocked?: boolean
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -85,6 +88,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       phone: user.phone,
       avatar: user.avatar,
       agentId: user.agent?.id || null,
+      providerId: user.providerProfile?.id || null,
+      providerVerificationStatus: user.providerProfile?.verificationStatus || null,
+      isBlocked: user.providerProfile?.isBlocked || false,
     }
   } catch {
     return session

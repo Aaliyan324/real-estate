@@ -22,8 +22,10 @@ generator client {
 
 enum Role {
   ADMIN
+  EMPLOYEE
   AGENT
   USER
+  SERVICE_PROVIDER
 }
 
 enum PropertyPurpose {
@@ -75,6 +77,48 @@ enum VisitStatus {
   CANCELLED
 }
 
+enum ProviderVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+  BLOCKED
+}
+
+enum ServiceRequestStatus {
+  DRAFT
+  OPEN
+  OFFER_RECEIVED
+  PROVIDER_SELECTED
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum ServiceOfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum FeeStatus {
+  PENDING
+  DUE
+  PAID
+  OVERDUE
+  WAIVED
+  DISPUTED
+}
+
+enum FeeType {
+  PERCENTAGE
+  FIXED
+  COMBINATION
+}
+
 model User {
   id        String   @id @default(cuid())
   name      String
@@ -86,11 +130,19 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  agent      Agent?
-  properties Property[]
-  favorites  Favorite[]
-  inquiries  Inquiry[]
-  visits     PropertyVisit[]
+  agent               Agent?
+  providerProfile     ServiceProviderProfile?
+  properties          Property[]
+  favorites           Favorite[]
+  inquiries           Inquiry[]
+  visits              PropertyVisit[]
+  serviceRequests     ServiceRequest[]
+  customerJobs        ServiceJob[]
+  providerFees        ProviderFee[]
+  feePaymentsVerified ProviderFeePayment[]
+  reviews             ProviderReview[]
+  notifications       Notification[]
+  employeePermissions EmployeePermission[]
 }
 
 model Agent {
@@ -240,3 +292,385 @@ model PropertyVisit {
   @@index([userId])
   @@index([status])
 }
+
+model ServiceProviderProfile {
+  id                 String                     @id @default(cuid())
+  userId             String                     @unique
+  user               User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cnic               String?
+  companyName        String?
+  bio                String?                    @db.Text
+  yearsExperience    Int                        @default(0)
+  rating             Float                      @default(0)
+  reviewCount        Int                        @default(0)
+  verificationStatus ProviderVerificationStatus @default(PENDING)
+  verificationNotes  String?                    @db.Text
+  isBlocked          Boolean                    @default(false)
+  address            String?
+  serviceRadiusKm    Float?                     @default(15)
+  availableDays      String?
+  availableHours     String?
+  bankName           String?
+  bankAccountTitle   String?
+  bankAccountNumber  String?
+  emergencyContact   String?
+  totalEarnings      Float                      @default(0)
+  feesOwed           Float                      @default(0)
+  feesPaid           Float                      @default(0)
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  categories         ServiceProviderCategory[]
+  locations          ServiceProviderLocation[]
+  offers             ServiceOffer[]
+  jobs               ServiceJob[]
+  fees               ProviderFee[]
+  reviews            ProviderReview[]
+
+  @@index([verificationStatus])
+  @@index([isBlocked])
+}
+
+model ServiceCategory {
+  id              String                    @id @default(cuid())
+  name            String                    @unique
+  slug            String                    @unique
+  description     String?                   @db.Text
+  icon            String?
+  isSystemDefault Boolean                   @default(false)
+  isActive        Boolean                   @default(true)
+  sortOrder       Int                       @default(0)
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  subcategories    ServiceSubcategory[]
+  providerServices ServiceProviderCategory[]
+  requests         ServiceRequest[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model ServiceSubcategory {
+  id          String           @id @default(cuid())
+  categoryId  String
+  category    ServiceCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  description String?          @db.Text
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  requests    ServiceRequest[]
+
+  @@unique([categoryId, slug])
+  @@index([categoryId])
+}
+
+model ServiceProviderCategory {
+  providerId String
+  provider   ServiceProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   ServiceCategory        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([providerId, categoryId])
+  @@index([providerId])
+  @@index([categoryId])
+}
+
+model LocationProvince {
+  id        String             @id @default(cuid())
+  name      String             @unique
+  code      String             @unique
+  createdAt DateTime           @default(now())
+
+  divisions LocationDivision[]
+  districts LocationDistrict[]
+  cities    LocationCity[]
+}
+
+model LocationDivision {
+  id         String           @id @default(cuid())
+  name       String
+  provinceId String
+  province   LocationProvince @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  createdAt  DateTime         @default(now())
+
+  districts  LocationDistrict[]
+
+  @@unique([provinceId, name])
+}
+
+model LocationDistrict {
+  id          String            @id @default(cuid())
+  name        String
+  provinceId  String
+  province    LocationProvince  @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  divisionId  String?
+  division    LocationDivision? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  createdAt   DateTime          @default(now())
+
+  cities      LocationCity[]
+  areas       LocationArea[]
+
+  @@unique([provinceId, name])
+  @@index([provinceId])
+}
+
+model LocationCity {
+  id          String            @id @default(cuid())
+  name        String
+  provinceId  String?
+  province    LocationProvince? @relation(fields: [provinceId], references: [id], onDelete: SetNull)
+  districtId  String?
+  district    LocationDistrict? @relation(fields: [districtId], references: [id], onDelete: SetNull)
+  createdAt   DateTime          @default(now())
+
+  areas       LocationArea[]
+
+  @@index([provinceId])
+  @@index([districtId])
+  @@index([name])
+}
+
+model LocationArea {
+  id         String            @id @default(cuid())
+  name       String
+  cityId     String
+  city       LocationCity      @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  districtId String?
+  district   LocationDistrict? @relation(fields: [districtId], references: [id], onDelete: SetNull)
+  createdAt  DateTime          @default(now())
+
+  @@index([cityId])
+  @@index([districtId])
+  @@index([name])
+}
+
+model ServiceProviderLocation {
+  id         String                 @id @default(cuid())
+  providerId String
+  provider   ServiceProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  provinceId String?
+  districtId String?
+  cityId     String?
+  areaId     String?
+  cityName   String?
+
+  @@index([providerId])
+  @@index([cityId])
+}
+
+model ServiceRequest {
+  id                 String                    @id @default(cuid())
+  requestNumber      String                    @unique
+  customerId         String
+  customer           User                      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  categoryId         String
+  category           ServiceCategory           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subcategoryId      String?
+  subcategory        ServiceSubcategory?       @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+  title              String
+  description        String                    @db.Text
+  urgency            String                    @default("NORMAL")
+  provinceId         String?
+  districtId         String?
+  cityId             String?
+  areaId             String?
+  city               String
+  area               String
+  address            String
+  landmark           String?
+  preferredDate      DateTime?
+  preferredTime      String?
+  photos             String?                   @db.Text
+  status             ServiceRequestStatus      @default(OPEN)
+  selectedProviderId String?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+
+  attachments        ServiceRequestAttachment[]
+  offers             ServiceOffer[]
+  job                ServiceJob?
+  reviews            ProviderReview[]
+
+  @@index([customerId])
+  @@index([categoryId])
+  @@index([city])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ServiceRequestAttachment {
+  id        String         @id @default(cuid())
+  requestId String
+  request   ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  url       String
+  fileType  String?
+  createdAt DateTime       @default(now())
+
+  @@index([requestId])
+}
+
+model ServiceOffer {
+  id                      String                 @id @default(cuid())
+  requestId               String
+  request                 ServiceRequest         @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  providerId              String
+  provider                ServiceProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  proposedPrice           Float
+  estimatedCompletionTime String
+  message                 String                 @db.Text
+  status                  ServiceOfferStatus     @default(PENDING)
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+
+  job                     ServiceJob?
+
+  @@index([requestId])
+  @@index([providerId])
+  @@index([status])
+}
+
+model ServiceJob {
+  id            String                  @id @default(cuid())
+  jobNumber     String                  @unique
+  requestId     String                  @unique
+  request       ServiceRequest          @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      User                    @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  providerId    String
+  provider      ServiceProviderProfile  @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  offerId       String?                 @unique
+  offer         ServiceOffer?           @relation(fields: [offerId], references: [id], onDelete: SetNull)
+  agreedPrice   Float
+  status        ServiceRequestStatus    @default(ACCEPTED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  cancelledAt   DateTime?
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  statusHistory ServiceJobStatusHistory[]
+  fee           ProviderFee?
+  review        ProviderReview?
+
+  @@index([customerId])
+  @@index([providerId])
+  @@index([status])
+}
+
+model ServiceJobStatusHistory {
+  id          String               @id @default(cuid())
+  jobId       String
+  job         ServiceJob           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  status      ServiceRequestStatus
+  note        String?              @db.Text
+  createdById String?
+  createdAt   DateTime             @default(now())
+
+  @@index([jobId])
+}
+
+model PlatformFeeConfig {
+  id                 String   @id @default("default")
+  feeType            FeeType  @default(PERCENTAGE)
+  percentage         Float    @default(10.0)
+  fixedAmount        Float    @default(0.0)
+  overdueDays        Int      @default(7)
+  blockThresholdDays Int      @default(14)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ProviderFee {
+  id                String                 @id @default(cuid())
+  jobId             String                 @unique
+  job               ServiceJob             @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  providerId        String
+  provider          ServiceProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  customerId        String
+  customer          User                   @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  grossAmount       Float
+  percentageRate    Float                  @default(10.0)
+  fixedRate         Float                  @default(0.0)
+  platformFee       Float
+  netProviderAmount Float
+  status            FeeStatus              @default(DUE)
+  dueDate           DateTime
+  paidDate          DateTime?
+  paymentReference  String?
+  notes             String?                @db.Text
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  payments          ProviderFeePayment[]
+
+  @@index([providerId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model ProviderFeePayment {
+  id               String       @id @default(cuid())
+  feeId            String
+  fee              ProviderFee  @relation(fields: [feeId], references: [id], onDelete: Cascade)
+  providerId       String
+  amount           Float
+  paymentReference String?
+  paymentMethod    String?      @default("BANK_TRANSFER")
+  notes            String?      @db.Text
+  verifiedById     String?
+  verifiedBy       User?        @relation(fields: [verifiedById], references: [id], onDelete: SetNull)
+  verifiedAt       DateTime?
+  createdAt        DateTime     @default(now())
+
+  @@index([feeId])
+  @@index([providerId])
+}
+
+model ProviderReview {
+  id         String                 @id @default(cuid())
+  jobId      String                 @unique
+  job        ServiceJob             @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  requestId  String
+  request    ServiceRequest         @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  providerId String
+  provider   ServiceProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   User                   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  rating     Int
+  comment    String?                @db.Text
+  createdAt  DateTime               @default(now())
+
+  @@index([providerId])
+  @@index([customerId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String   @db.Text
+  type      String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model EmployeePermission {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, permission])
+  @@index([userId])
+}
+

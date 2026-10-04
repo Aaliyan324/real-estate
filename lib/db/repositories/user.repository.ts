@@ -30,6 +30,7 @@ export const userRepository = {
         phone: true,
         avatar: true,
         agent: { select: { id: true } },
+        providerProfile: { select: { id: true, verificationStatus: true, isBlocked: true } },
       },
     })
   },
