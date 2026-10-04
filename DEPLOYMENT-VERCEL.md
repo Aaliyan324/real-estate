@@ -110,11 +110,10 @@ Configure these in **Production**, **Preview**, and **Development**:
 | `DATABASE_URL` | Neon **pooled** `postgresql://…` URL. |
 | `AUTH_SECRET` | Strong secret; same value across envs you want to share sessions on. |
 | `NEXT_PUBLIC_SITE_URL` | Your public site URL. |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | If using maps. |
 | `BLOB_READ_WRITE_TOKEN` | **Required on Vercel** for image uploads (see Step 9). |
 
 > ⚠️ Never expose database credentials or the Blob token as `NEXT_PUBLIC_*`.
-> Only `NEXT_PUBLIC_SITE_URL` and the Maps key are client-safe.
+> Only `NEXT_PUBLIC_SITE_URL` is client-safe.
 
 ### Preview vs Production databases
 

@@ -1,10 +1,15 @@
 import { PrismaClient, Role, PropertyPurpose, PropertyType, AreaUnit, FurnishingStatus, PropertyStatus } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { seedPakistanLocations, seedServiceCategories } from '../lib/seedPakistanLocations'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Seeding initial data for PakHaven Real Estate...')
+  console.log('Seeding initial data for PakHaven Real Estate & Home Services Marketplace...')
+
+  // Seed location hierarchy & marketplace categories
+  await seedPakistanLocations()
+  await seedServiceCategories()
 
   // Create Admin User
   const adminPassword = await bcrypt.hash('AdminPass123!', 10)

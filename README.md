@@ -10,7 +10,7 @@ Designed for high performance, accessibility, SEO optimization, and seamless Hos
 
 * **Pakistani Property Organization**: Built-in support for Marla, Kanal, Sq. Ft., PKR pricing (Crore / Lakh), DHA, Bahria Town, and CDA sectors.
 * **Property Search & Multi-Filters**: Filter by Purpose (Buy/Rent), Property Type (House, Apartment, Plot, Commercial, Office, Shop, Farm House), City, Price Range, Bedrooms, Bathrooms, and Verified status.
-* **Interactive Maps**: Google Maps integration with graceful neighborhood card fallback.
+* **Location System**: Database-backed Pakistan location hierarchy (Provinces, Divisions, Districts, Cities, Areas) without external API dependencies.
 * **PDF Property Brochure Generator**: One-click printable brochure generator.
 * **Direct Agent WhatsApp & Contact**: Dynamic WhatsApp link creation ("Hello, I am interested in [Title]. Property ID: [ID]").
 * **Property Visit Scheduling**: Instant appointment booking system with admin management.
