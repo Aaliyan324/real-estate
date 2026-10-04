@@ -293,6 +293,8 @@ export default function AdminMarketplacePage() {
                 className="py-2 px-3 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="ALL">All Statuses</option>
+                <option value="OPEN">OPEN</option>
+                <option value="PROVIDER_SELECTED">PROVIDER_SELECTED</option>
                 <option value="ACCEPTED">ACCEPTED</option>
                 <option value="IN_PROGRESS">IN_PROGRESS</option>
                 <option value="COMPLETED">COMPLETED</option>

@@ -280,12 +280,56 @@ export default function AdminProvidersPage() {
                   <span className="text-gray-400 block font-bold">CNIC Number</span>
                   <span className="font-bold text-gray-900">{selectedProvider.cnic || 'Not provided'}</span>
                 </div>
+                <div>
+                  <span className="text-gray-400 block font-bold">Experience & Rating</span>
+                  <span className="font-bold text-gray-900">
+                    {selectedProvider.yearsExperience} Year(s) • ★ {selectedProvider.rating > 0 ? selectedProvider.rating.toFixed(1) : 'New'} ({selectedProvider.reviewCount} reviews)
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-400 block font-bold">Completed Jobs</span>
+                  <span className="font-bold text-emerald-700">{selectedProvider._count?.jobs ?? 0} jobs</span>
+                </div>
+                {selectedProvider.bio && (
+                  <div className="col-span-2">
+                    <span className="text-gray-400 block font-bold">Bio & Description</span>
+                    <p className="text-gray-700 font-normal leading-relaxed mt-0.5">{selectedProvider.bio}</p>
+                  </div>
+                )}
+                <div className="col-span-2">
+                  <span className="text-gray-400 block font-bold">Service Categories</span>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedProvider.categories.map((c, idx) => (
+                      <span key={idx} className="px-2 py-0.5 bg-emerald-100 text-[#16834B] rounded text-[10px] font-bold">
+                        {c.category?.name}
+                      </span>
+                    ))}
+                    {selectedProvider.categories.length === 0 && <span className="text-gray-400 italic">None selected</span>}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-gray-400 block font-bold">Operating Cities</span>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedProvider.locations.map((l, idx) => (
+                      <span key={idx} className="px-2 py-0.5 bg-gray-200 text-gray-800 rounded text-[10px] font-bold">
+                        {l.cityName}
+                      </span>
+                    ))}
+                    {selectedProvider.locations.length === 0 && <span className="text-gray-400 italic">None selected</span>}
+                  </div>
+                </div>
                 <div className="col-span-2">
                   <span className="text-gray-400 block font-bold">Bank Info</span>
                   <span className="font-bold text-gray-900">
-                    {selectedProvider.bankName || 'N/A'} — {selectedProvider.bankAccountTitle} ({selectedProvider.bankAccountNumber})
+                    {selectedProvider.bankName || 'N/A'} — {selectedProvider.bankAccountTitle || 'N/A'} ({selectedProvider.bankAccountNumber || 'N/A'})
                   </span>
                 </div>
+                {selectedProvider.verificationNotes && (
+                  <div className="col-span-2 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                    <span className="text-amber-800 block font-bold text-[10px]">Previous Admin Notes</span>
+                    <span className="text-amber-900 font-medium">{selectedProvider.verificationNotes}</span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -303,28 +347,28 @@ export default function AdminProvidersPage() {
                 <button
                   disabled={submitting}
                   onClick={() => handleUpdateStatus(selectedProvider.id, 'APPROVED', undefined, false)}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
                 >
                   Approve Provider
                 </button>
                 <button
                   disabled={submitting}
                   onClick={() => handleUpdateStatus(selectedProvider.id, 'REJECTED')}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
                 >
                   Reject Application
                 </button>
                 <button
                   disabled={submitting}
                   onClick={() => handleUpdateStatus(selectedProvider.id, 'SUSPENDED')}
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
                 >
                   Suspend Account
                 </button>
                 <button
                   disabled={submitting}
                   onClick={() => handleUpdateStatus(selectedProvider.id, selectedProvider.verificationStatus, undefined, !selectedProvider.isBlocked)}
-                  className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                  className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
                 >
                   {selectedProvider.isBlocked ? 'Unblock Provider' : 'Block Provider'}
                 </button>

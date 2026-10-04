@@ -56,11 +56,9 @@ export default function Header() {
     fetch('/api/auth/me')
       .then((res) => res.json())
       .then((data) => {
-        if (data.user) {
-          setUser(data.user)
-        }
+        setUser(data.user || null)
       })
-      .catch(() => {})
+      .catch(() => setUser(null))
   }, [pathname])
 
   useEffect(() => {
