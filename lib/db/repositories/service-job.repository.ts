@@ -35,7 +35,7 @@ export const serviceJobRepository = {
       },
       include: {
         request: { include: { category: true } },
-        customer: { select: { name: true, phone: true, address: true } },
+        customer: { select: { name: true, phone: true } },
         fee: true,
         review: true,
       },
