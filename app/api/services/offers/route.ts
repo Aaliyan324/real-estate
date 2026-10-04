@@ -55,19 +55,17 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check provider serves the request's city/category
-    const requestCity = serviceRequest.city
-    const servesCity = provider.locations.some(
-      (l) => l.cityName != null && l.cityName.toLowerCase() === requestCity.toLowerCase()
-    )
-    const servesCategory = provider.categories.some(
-      (c) => c.categoryId === serviceRequest.categoryId
-    )
-    if (!servesCity || !servesCategory) {
-      return NextResponse.json(
-        { error: 'You are not eligible to offer on this request (city or category mismatch).' },
-        { status: 403 }
+    // Category matching check (if provider configured categories)
+    if (provider.categories.length > 0) {
+      const servesCategory = provider.categories.some(
+        (c) => c.categoryId === serviceRequest.categoryId
       )
+      if (!servesCategory) {
+        return NextResponse.json(
+          { error: 'You are not eligible to offer on this request (category mismatch).' },
+          { status: 403 }
+        )
+      }
     }
 
     const offer = await serviceOfferRepository.create({

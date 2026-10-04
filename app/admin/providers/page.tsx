@@ -55,6 +55,8 @@ interface ProviderItem {
   }
 }
 
+import AdminNav from '@/components/AdminNav'
+
 export default function AdminProvidersPage() {
   const [providers, setProviders] = useState<ProviderItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -118,6 +120,7 @@ export default function AdminProvidersPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <Header />
+      <AdminNav />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-5">

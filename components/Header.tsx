@@ -258,7 +258,7 @@ export default function Header() {
                         <span>Admin Dashboard</span>
                       </Link>
                     )}
-                    {user.role === 'PROVIDER' && (
+                    {(user.role === 'SERVICE_PROVIDER' || user.role === 'PROVIDER') && (
                       <Link
                         href="/provider/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
@@ -430,7 +430,7 @@ export default function Header() {
                     Admin Dashboard
                   </Link>
                 )}
-                {user.role === 'PROVIDER' && (
+                {(user.role === 'SERVICE_PROVIDER' || user.role === 'PROVIDER') && (
                   <Link
                     href="/provider/dashboard"
                     onClick={() => setMobileMenuOpen(false)}

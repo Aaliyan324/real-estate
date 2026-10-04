@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { serviceRequestRepository, serviceProviderRepository } from '@/lib/db'
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const user = await getCurrentUser()
     if (!user) {
@@ -26,20 +26,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
     }
 
-    // Get provider's served categories and cities
+    // Get provider's served categories
     const categoryIds = provider.categories.map((c) => c.categoryId)
-    const cities = provider.locations
-      .map((l) => l.cityName)
-      .filter((c): c is string => c !== null && c !== '')
 
-    if (categoryIds.length === 0 || cities.length === 0) {
-      return NextResponse.json({ success: true, requests: [], message: 'Set your service categories and cities to see available requests.' })
-    }
-
+    // Location restriction removed as per requirements — all open requests visible to approved providers
     const requests = await serviceRequestRepository.findEligibleForProvider(
       provider.id,
-      categoryIds,
-      cities
+      categoryIds
     )
 
     return NextResponse.json({ success: true, requests })
@@ -48,3 +41,4 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Failed to load marketplace' }, { status: 500 })
   }
 }
+

@@ -112,7 +112,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         where: { id: offer.requestId },
         data: { status: 'ACCEPTED', selectedProviderId: offer.providerId },
       })
-    })
+    }, { timeout: 15000, maxWait: 5000 })
 
     return NextResponse.json({ success: true, message: 'Offer accepted. Job created.' })
   } catch (error) {

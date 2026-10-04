@@ -16,8 +16,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Request not found' }, { status: 404 })
     }
 
-    // Ownership check — customers can only see their own requests
-    if (serviceRequest.customerId !== user.id && user.role !== 'ADMIN' && user.role !== 'EMPLOYEE') {
+    // Ownership check — customers see their own; admins/employees/providers can read all
+    if (
+      serviceRequest.customerId !== user.id &&
+      user.role !== 'ADMIN' &&
+      user.role !== 'EMPLOYEE' &&
+      user.role !== 'SERVICE_PROVIDER'
+    ) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

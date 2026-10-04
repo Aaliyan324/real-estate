@@ -19,8 +19,32 @@ export async function middleware(request: NextRequest) {
       const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
       const role = payload.role as string
 
-      if (role !== 'ADMIN' && role !== 'AGENT') {
-        return NextResponse.redirect(new URL('/?error=unauthorized', request.url))
+      if (role !== 'ADMIN' && role !== 'AGENT' && role !== 'EMPLOYEE') {
+        return NextResponse.redirect(new URL('/login?error=unauthorized', request.url))
+      }
+    } catch {
+      return NextResponse.redirect(new URL(`/login?callbackUrl=${encodeURIComponent(path)}`, request.url))
+    }
+  }
+
+  if (path.startsWith('/provider')) {
+    // Allow public access to provider registration page
+    if (path === '/provider/register') {
+      return NextResponse.next()
+    }
+
+    const token = request.cookies.get('auth_token')?.value
+
+    if (!token) {
+      return NextResponse.redirect(new URL(`/login?callbackUrl=${encodeURIComponent(path)}`, request.url))
+    }
+
+    try {
+      const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
+      const role = payload.role as string
+
+      if (role !== 'SERVICE_PROVIDER' && role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/login?error=unauthorized', request.url))
       }
     } catch {
       return NextResponse.redirect(new URL(`/login?callbackUrl=${encodeURIComponent(path)}`, request.url))
@@ -31,5 +55,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/provider/:path*'],
 }
+

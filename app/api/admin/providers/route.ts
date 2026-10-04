@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { checkAdminOrEmployeePermission } from '@/lib/adminAuth'
 import { serviceProviderRepository, notificationRepository } from '@/lib/db'
+import { prisma } from '@/lib/db/client'
 import { ProviderVerificationStatus } from '@prisma/client'
 
 export async function GET(request: Request) {
@@ -19,7 +20,11 @@ export async function GET(request: Request) {
       search,
     })
 
-    return NextResponse.json({ success: true, providers })
+    const pendingCount = await prisma.serviceProviderProfile.count({
+      where: { verificationStatus: 'PENDING' },
+    })
+
+    return NextResponse.json({ success: true, providers, pendingCount })
   } catch (error) {
     console.error('Admin error fetching providers:', error)
     return NextResponse.json({ error: 'Failed to load service providers' }, { status: 500 })

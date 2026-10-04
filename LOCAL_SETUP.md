@@ -81,7 +81,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 1. Navigate to [http://localhost:3000/login](http://localhost:3000/login).
 2. Login with Admin credentials:
    - **Email**: `admin@pakhaven.pk`
-   - **Password**: `AdminPass123!`
+   - **Password**: `s`
 3. Navigate to [http://localhost:3000/admin](http://localhost:3000/admin).
 
 ---

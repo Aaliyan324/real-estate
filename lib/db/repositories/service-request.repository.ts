@@ -56,12 +56,11 @@ export const serviceRequestRepository = {
     })
   },
 
-  findEligibleForProvider(providerId: string, categoryIds: string[], cities: string[]) {
+  findEligibleForProvider(providerId: string, categoryIds: string[]) {
     return prisma.serviceRequest.findMany({
       where: {
         status: { in: ['OPEN', 'OFFER_RECEIVED'] },
-        categoryId: { in: categoryIds },
-        city: { in: cities },
+        ...(categoryIds && categoryIds.length > 0 ? { categoryId: { in: categoryIds } } : {}),
       },
       include: {
         customer: { select: { name: true, avatar: true } },

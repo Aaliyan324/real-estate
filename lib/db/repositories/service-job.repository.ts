@@ -64,10 +64,22 @@ export const serviceJobRepository = {
         ...(filters?.customerId ? { customerId: filters.customerId } : {}),
       },
       include: {
-        request: { include: { category: true } },
-        customer: { select: { id: true, name: true, email: true } },
-        provider: { include: { user: { select: { id: true, name: true } } } },
+        request: {
+          include: {
+            category: true,
+            subcategory: true,
+            attachments: true,
+          },
+        },
+        customer: { select: { id: true, name: true, email: true, phone: true, avatar: true } },
+        provider: {
+          include: {
+            user: { select: { id: true, name: true, email: true, phone: true, avatar: true } },
+            reviews: { select: { rating: true } },
+          },
+        },
         fee: true,
+        review: true,
       },
       orderBy: { createdAt: 'desc' },
     })

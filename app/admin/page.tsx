@@ -70,6 +70,8 @@ interface AdminAgent {
   _count?: { properties: number }
 }
 
+import AdminNav from '@/components/AdminNav'
+
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'properties' | 'inquiries' | 'visits' | 'agents'>('properties')
 
@@ -149,6 +151,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-[#F5F7F6] flex flex-col">
       <Header />
+      <AdminNav />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
         {/* Page Header */}
