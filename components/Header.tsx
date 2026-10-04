@@ -375,6 +375,22 @@ export default function Header() {
           </div>
 
           <Link
+            href="/home-services"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+          >
+            <Wrench className="w-5 h-5 text-[#16834B]" />
+            <span>Home Services</span>
+          </Link>
+          <Link
+            href="/my-requests"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+          >
+            <Wrench className="w-5 h-5 text-[#16834B]" />
+            <span>My Service Requests</span>
+          </Link>
+          <Link
             href="/agents"
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
@@ -412,6 +428,15 @@ export default function Header() {
                     className="w-full text-center bg-[#16834B] text-white py-2 rounded-lg font-semibold"
                   >
                     Admin Dashboard
+                  </Link>
+                )}
+                {user.role === 'PROVIDER' && (
+                  <Link
+                    href="/provider/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center bg-[#16834B] text-white py-2 rounded-lg font-semibold"
+                  >
+                    Provider Dashboard
                   </Link>
                 )}
                 <button
