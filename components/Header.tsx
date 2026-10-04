@@ -21,6 +21,7 @@ import {
   Briefcase,
   Trees,
   MapPin,
+  Wrench,
 } from 'lucide-react'
 
 interface UserSession {
@@ -219,6 +220,15 @@ export default function Header() {
             >
               Agents
             </Link>
+            <Link
+              href="/home-services"
+              className={`flex items-center space-x-1 transition-colors py-1 ${
+                isActive('/home-services') ? 'text-[#16834B] border-b-2 border-[#16834B]' : 'text-gray-700 hover:text-[#16834B]'
+              }`}
+            >
+              <Wrench className="w-3.5 h-3.5" />
+              <span>Services</span>
+            </Link>
           </nav>
 
           {/* Desktop Right Action */}
@@ -233,7 +243,7 @@ export default function Header() {
                   <span>{user.name}</span>
                 </button>
                 {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 animate-fade-in">
+                  <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 animate-fade-in">
                     <div className="px-4 py-2 border-b border-gray-100 text-xs text-gray-500">
                       Signed in as <br />
                       <strong className="text-gray-800">{user.email}</strong>
@@ -248,6 +258,24 @@ export default function Header() {
                         <span>Admin Dashboard</span>
                       </Link>
                     )}
+                    {user.role === 'PROVIDER' && (
+                      <Link
+                        href="/provider/dashboard"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-[#16834B]"
+                      >
+                        <Briefcase className="w-4 h-4" />
+                        <span>Provider Dashboard</span>
+                      </Link>
+                    )}
+                    <Link
+                      href="/my-requests"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-[#16834B]"
+                    >
+                      <Wrench className="w-4 h-4" />
+                      <span>My Service Requests</span>
+                    </Link>
                     <Link
                       href="/favorites"
                       onClick={() => setUserDropdownOpen(false)}
