@@ -57,9 +57,6 @@ export async function PUT(request: Request) {
     } = body
 
     if (name || phone) {
-      await userRepository.create({
-        // using update instead
-      }).catch(() => {})
       const { prisma } = await import('@/lib/db')
       await prisma.user.update({
         where: { id: user.id },

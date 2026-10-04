@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
     // 2. Create ServiceProviderProfile with PENDING verification status
     const profile = await serviceProviderRepository.create({
-      userId: user.id,
+      user: { connect: { id: user.id } },
       cnic: cnic ? cnic.trim() : null,
       companyName: companyName ? companyName.trim() : null,
       bio: bio ? bio.trim() : null,
