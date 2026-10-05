@@ -171,8 +171,8 @@ export default function LocationSearch({
 
       {/* OLX-Style Autocomplete Dropdown Panel */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden max-h-72 overflow-y-auto animate-fade-in divide-y divide-gray-100">
-          <div className="px-3 py-1.5 bg-gray-50 text-[10px] font-bold uppercase tracking-wider text-gray-500 flex justify-between items-center">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden max-h-60 sm:max-h-72 overflow-y-auto animate-fade-in divide-y divide-gray-100 max-w-[calc(100vw-2rem)] sm:max-w-none">
+          <div className="px-3 py-1.5 bg-gray-50 text-[10px] font-bold uppercase tracking-wider text-gray-500 flex justify-between items-center sticky top-0 z-10 border-b border-gray-100">
             <span>Location Suggestions</span>
             {loading && <span className="text-xs text-[#16834B] font-normal">Searching...</span>}
           </div>
@@ -201,3 +201,4 @@ export default function LocationSearch({
     </div>
   )
 }
+

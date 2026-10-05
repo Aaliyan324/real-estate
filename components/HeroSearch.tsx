@@ -33,14 +33,14 @@ export default function HeroSearch() {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl text-gray-900 text-left max-w-4xl mx-auto space-y-4">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl text-gray-900 text-left max-w-4xl mx-auto space-y-4 w-full">
       <form onSubmit={handleSearch} className="space-y-4">
         {/* Purpose Radio Pills */}
-        <div className="flex space-x-2 border-b border-gray-100 pb-3">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 border-b border-gray-100 pb-3">
           <button
             type="button"
             onClick={() => setPurpose('FOR_SALE')}
-            className={`flex items-center space-x-2 font-bold text-xs px-5 py-2.5 rounded-xl border transition cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 font-bold text-xs px-4 sm:px-5 py-2.5 rounded-xl border transition cursor-pointer touch-target ${
               purpose === 'FOR_SALE'
                 ? 'text-[#16834B] bg-green-50 border-green-200 shadow-xs'
                 : 'text-gray-600 bg-gray-50 border-gray-200 hover:bg-gray-100'
@@ -52,7 +52,7 @@ export default function HeroSearch() {
           <button
             type="button"
             onClick={() => setPurpose('FOR_RENT')}
-            className={`flex items-center space-x-2 font-bold text-xs px-5 py-2.5 rounded-xl border transition cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 font-bold text-xs px-4 sm:px-5 py-2.5 rounded-xl border transition cursor-pointer touch-target ${
               purpose === 'FOR_RENT'
                 ? 'text-[#16834B] bg-green-50 border-green-200 shadow-xs'
                 : 'text-gray-600 bg-gray-50 border-gray-200 hover:bg-gray-100'
@@ -73,14 +73,13 @@ export default function HeroSearch() {
               value={locationText}
               onChangeText={(text) => {
                 setLocationText(text)
-                // If user edits text manually, clear stored city/keyword override
                 if (selectedCity && !text.includes(selectedCity)) {
                   setSelectedCity('')
                   setSelectedKeyword('')
                 }
               }}
               onSelectLocation={handleSelectLocation}
-              placeholder="Type city, area, society (e.g. DHA, Johar Town, Islamabad)..."
+              placeholder="City, area, society (e.g. DHA, Johar Town)..."
             />
           </div>
 
@@ -90,7 +89,7 @@ export default function HeroSearch() {
             <select
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
+              className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none touch-target"
             >
               <option value="">All Types</option>
               <option value="HOUSE">House</option>
@@ -107,7 +106,7 @@ export default function HeroSearch() {
           <div className="lg:col-span-2">
             <button
               type="submit"
-              className="w-full bg-[#16834B] hover:bg-[#126b3d] text-white font-bold text-xs py-3 rounded-lg transition shadow-md flex items-center justify-center space-x-2 cursor-pointer"
+              className="w-full bg-[#16834B] hover:bg-[#126b3d] text-white font-bold text-xs py-3 rounded-lg transition shadow-md flex items-center justify-center space-x-2 cursor-pointer touch-target"
             >
               <Search className="w-4 h-4" />
               <span>Search Properties</span>
@@ -118,3 +117,4 @@ export default function HeroSearch() {
     </div>
   )
 }
+
