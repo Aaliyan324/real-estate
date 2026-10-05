@@ -45,11 +45,11 @@ export default function AdminNav() {
   ]
 
   return (
-    <div className="bg-white border-b border-gray-200 shadow-xs">
+    <div className="bg-white border-b border-gray-200 shadow-xs max-w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          <div className="flex items-center space-x-1 sm:space-x-4 overflow-x-auto">
-            <span className="text-xs font-black uppercase text-gray-400 tracking-wider hidden sm:inline mr-2">
+          <div className="flex items-center space-x-1 sm:space-x-3 overflow-x-auto py-1 no-scrollbar max-w-full">
+            <span className="text-[11px] font-black uppercase text-gray-400 tracking-wider shrink-0 hidden sm:inline mr-1">
               Admin Portal:
             </span>
             {navItems.map((item) => {
@@ -62,13 +62,13 @@ export default function AdminNav() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                  className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 ${
                     active
                       ? 'bg-[#16834B] text-white shadow-xs'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 shrink-0" />
                   <span>{item.label}</span>
                   {item.badge && (
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${item.badgeColor}`}>
@@ -80,7 +80,7 @@ export default function AdminNav() {
             })}
           </div>
 
-          <div className="hidden lg:flex items-center space-x-2 text-[11px] text-gray-500 font-semibold">
+          <div className="hidden lg:flex items-center space-x-2 text-[11px] text-gray-500 font-semibold shrink-0">
             <ShieldCheck className="w-4 h-4 text-[#16834B]" />
             <span>Administrator Access Authorized</span>
           </div>
@@ -89,3 +89,4 @@ export default function AdminNav() {
     </div>
   )
 }
+

@@ -61,6 +61,23 @@ export default function Header() {
       .catch(() => setUser(null))
   }, [pathname])
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
+
+  // Lock body scroll when mobile menu is active
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileMenuOpen])
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
@@ -88,24 +105,26 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs max-w-full">
       {/* Top Banner Contact Line */}
-      <div className="bg-[#1F2937] text-gray-300 text-xs py-1.5 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1">
+      <div className="bg-[#1F2937] text-gray-300 text-[11px] sm:text-xs py-1.5 px-3 sm:px-4">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-y-1">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <span className="flex items-center space-x-1 whitespace-nowrap">
               <Phone className="w-3.5 h-3.5 text-[#F4C430]" />
               <span>Helpline: +92 42 111 222 333</span>
             </span>
             <span className="hidden md:inline text-gray-500">|</span>
-            <span className="hidden md:inline">Pakistan&apos;s Verified Real Estate Marketplace</span>
+            <span className="hidden md:inline truncate max-w-xs xl:max-w-none">
+              Pakistan&apos;s Verified Real Estate Marketplace
+            </span>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/mortgage-calculator" className="hover:text-white transition flex items-center space-x-1">
+          <div className="flex items-center space-x-3 sm:space-x-4 ml-auto">
+            <Link href="/mortgage-calculator" className="hover:text-white transition flex items-center space-x-1 whitespace-nowrap">
               <Calculator className="w-3.5 h-3.5 text-[#F4C430]" />
               <span>Loan Calculator</span>
             </Link>
-            <Link href="/favorites" className="hover:text-white transition flex items-center space-x-1">
+            <Link href="/favorites" className="hover:text-white transition flex items-center space-x-1 whitespace-nowrap">
               <Heart className="w-3.5 h-3.5 text-red-400 fill-current" />
               <span>Favorites</span>
             </Link>
@@ -117,18 +136,18 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 text-[#16834B] font-bold text-xl tracking-tight">
-            <div className="bg-[#16834B] text-white p-2 rounded-lg shadow-sm">
-              <Building2 className="w-6 h-6" />
+          <Link href="/" className="flex items-center space-x-2 text-[#16834B] font-bold text-xl tracking-tight shrink-0">
+            <div className="bg-[#16834B] text-white p-1.5 sm:p-2 rounded-lg shadow-sm">
+              <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl leading-none font-black text-[#16834B]">PakHaven</span>
-              <span className="text-[10px] tracking-wider text-gray-500 font-semibold uppercase">Real Estate</span>
+              <span className="text-lg sm:text-xl leading-none font-black text-[#16834B]">PakHaven</span>
+              <span className="text-[9px] sm:text-[10px] tracking-wider text-gray-500 font-semibold uppercase">Real Estate</span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6 text-sm font-semibold">
             <Link
               href="/"
               className={`transition-colors py-1 ${
@@ -230,7 +249,7 @@ export default function Header() {
           </nav>
 
           {/* Desktop Right Action */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-3">
             {user ? (
               <div ref={userRef} className="relative">
                 <button
@@ -238,13 +257,13 @@ export default function Header() {
                   className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-800 transition cursor-pointer"
                 >
                   <User className="w-4 h-4 text-[#16834B]" />
-                  <span>{user.name}</span>
+                  <span className="max-w-[120px] truncate">{user.name}</span>
                 </button>
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 animate-fade-in">
                     <div className="px-4 py-2 border-b border-gray-100 text-xs text-gray-500">
                       Signed in as <br />
-                      <strong className="text-gray-800">{user.email}</strong>
+                      <strong className="text-gray-800 break-all">{user.email}</strong>
                     </div>
                     {(user.role === 'ADMIN' || user.role === 'AGENT') && (
                       <Link
@@ -302,7 +321,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-xs"
+                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-xs whitespace-nowrap"
                 >
                   Join / Add Property
                 </Link>
@@ -310,11 +329,11 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile menu trigger */}
-          <div className="flex md:hidden items-center space-x-2">
+          {/* Mobile/Tablet menu trigger */}
+          <div className="flex lg:hidden items-center space-x-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-gray-700 hover:text-[#16834B] hover:bg-gray-100 transition focus:outline-none cursor-pointer"
+              className="p-2 rounded-md text-gray-700 hover:text-[#16834B] hover:bg-gray-100 transition focus:outline-none cursor-pointer touch-target flex items-center justify-center"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -323,151 +342,167 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Backdrop & Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white px-4 pt-3 pb-6 space-y-3 animate-fade-in shadow-lg">
-          <Link
-            href="/"
+        <>
+          <div
+            className="fixed inset-0 top-[105px] z-40 bg-black/40 backdrop-blur-xs lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Home className="w-5 h-5 text-[#16834B]" />
-            <span>Home</span>
-          </Link>
-          <Link
-            href="/properties?purpose=FOR_SALE"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Search className="w-5 h-5 text-[#16834B]" />
-            <span>Buy Properties</span>
-          </Link>
-          <Link
-            href="/properties?purpose=FOR_RENT"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Building2 className="w-5 h-5 text-[#16834B]" />
-            <span>Rent Properties</span>
-          </Link>
+          />
+          <div className="fixed top-[105px] left-0 right-0 z-50 lg:hidden max-h-[calc(100vh-105px)] overflow-y-auto border-t border-gray-200 bg-white px-4 pt-3 pb-8 space-y-3 animate-fade-in shadow-xl">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Home className="w-5 h-5 text-[#16834B]" />
+              <span>Home</span>
+            </Link>
+            <Link
+              href="/properties?purpose=FOR_SALE"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Search className="w-5 h-5 text-[#16834B]" />
+              <span>Buy Properties</span>
+            </Link>
+            <Link
+              href="/properties?purpose=FOR_RENT"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Building2 className="w-5 h-5 text-[#16834B]" />
+              <span>Rent Properties</span>
+            </Link>
 
-          {/* Mobile Categories list */}
-          <div className="border-y border-gray-100 py-2 space-y-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-400 px-1 mb-1">Categories</div>
-            <div className="grid grid-cols-2 gap-1.5">
-              {CATEGORY_ITEMS.map((cat) => {
-                const Icon = cat.icon
-                return (
-                  <Link
-                    key={cat.type}
-                    href={`/properties?type=${cat.type}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50 text-xs font-semibold text-gray-700 hover:bg-green-50 hover:text-[#16834B]"
+            {/* Mobile Categories list */}
+            <div className="border-y border-gray-100 py-2.5 space-y-2">
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Categories</div>
+              <div className="grid grid-cols-2 gap-2">
+                {CATEGORY_ITEMS.map((cat) => {
+                  const Icon = cat.icon
+                  return (
+                    <Link
+                      key={cat.type}
+                      href={`/properties?type=${cat.type}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50 text-xs font-semibold text-gray-700 hover:bg-green-50 hover:text-[#16834B]"
+                    >
+                      <Icon className="w-4 h-4 text-[#16834B] shrink-0" />
+                      <span className="truncate">{cat.name}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+
+            <Link
+              href="/properties"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Building className="w-5 h-5 text-[#16834B]" />
+              <span>All Properties</span>
+            </Link>
+
+            <Link
+              href="/home-services"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Wrench className="w-5 h-5 text-[#16834B]" />
+              <span>Home Services</span>
+            </Link>
+            <Link
+              href="/my-requests"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Wrench className="w-5 h-5 text-[#16834B]" />
+              <span>My Service Requests</span>
+            </Link>
+            <Link
+              href="/agents"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <User className="w-5 h-5 text-[#16834B]" />
+              <span>Agents Directory</span>
+            </Link>
+            <Link
+              href="/mortgage-calculator"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Calculator className="w-5 h-5 text-[#F4C430]" />
+              <span>Mortgage Calculator</span>
+            </Link>
+            <Link
+              href="/favorites"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 py-2.5 text-base font-semibold text-gray-800 hover:text-[#16834B]"
+            >
+              <Heart className="w-5 h-5 text-red-500" />
+              <span>Saved Favorites</span>
+            </Link>
+
+            <div className="pt-4 border-t border-gray-200 flex flex-col space-y-2">
+              {user ? (
+                <>
+                  <div className="py-2 text-sm font-semibold text-gray-700">
+                    Signed in as <strong>{user.name}</strong>
+                  </div>
+                  {(user.role === 'ADMIN' || user.role === 'AGENT') && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full text-center bg-[#16834B] text-white py-2.5 rounded-lg font-semibold"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  {(user.role === 'SERVICE_PROVIDER' || user.role === 'PROVIDER') && (
+                    <Link
+                      href="/provider/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full text-center bg-[#16834B] text-white py-2.5 rounded-lg font-semibold"
+                    >
+                      Provider Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full text-center border border-red-500 text-red-600 py-2.5 rounded-lg font-semibold cursor-pointer"
                   >
-                    <Icon className="w-3.5 h-3.5 text-[#16834B]" />
-                    <span className="truncate">{cat.name}</span>
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-800"
+                  >
+                    Sign In
                   </Link>
-                )
-              })}
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2.5 bg-[#16834B] text-white rounded-lg text-sm font-semibold"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
-
-          <Link
-            href="/home-services"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Wrench className="w-5 h-5 text-[#16834B]" />
-            <span>Home Services</span>
-          </Link>
-          <Link
-            href="/my-requests"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Wrench className="w-5 h-5 text-[#16834B]" />
-            <span>My Service Requests</span>
-          </Link>
-          <Link
-            href="/agents"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <User className="w-5 h-5 text-[#16834B]" />
-            <span>Agents Directory</span>
-          </Link>
-          <Link
-            href="/mortgage-calculator"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Calculator className="w-5 h-5 text-[#F4C430]" />
-            <span>Mortgage Calculator</span>
-          </Link>
-          <Link
-            href="/favorites"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center space-x-2 py-2 text-base font-semibold text-gray-800 hover:text-[#16834B]"
-          >
-            <Heart className="w-5 h-5 text-red-500" />
-            <span>Saved Favorites</span>
-          </Link>
-
-          <div className="pt-4 border-t border-gray-200 flex flex-col space-y-2">
-            {user ? (
-              <>
-                <div className="py-2 text-sm font-semibold text-gray-700">
-                  Signed in as <strong>{user.name}</strong>
-                </div>
-                {(user.role === 'ADMIN' || user.role === 'AGENT') && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center bg-[#16834B] text-white py-2 rounded-lg font-semibold"
-                  >
-                    Admin Dashboard
-                  </Link>
-                )}
-                {(user.role === 'SERVICE_PROVIDER' || user.role === 'PROVIDER') && (
-                  <Link
-                    href="/provider/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center bg-[#16834B] text-white py-2 rounded-lg font-semibold"
-                  >
-                    Provider Dashboard
-                  </Link>
-                )}
-                <button
-                  onClick={() => {
-                    handleLogout()
-                    setMobileMenuOpen(false)
-                  }}
-                  className="w-full text-center border border-red-500 text-red-600 py-2 rounded-lg font-semibold"
-                >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2 border border-gray-300 rounded-lg text-sm font-semibold text-gray-800"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2 bg-[#16834B] text-white rounded-lg text-sm font-semibold"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
+        </>
       )}
     </header>
   )
 }
+
