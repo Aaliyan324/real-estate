@@ -108,17 +108,17 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl relative my-8">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fade-in">
+      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 shadow-2xl relative my-auto sm:my-8">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition cursor-pointer"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition cursor-pointer touch-target flex items-center justify-center"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="border-b border-gray-100 pb-3">
-          <h3 className="font-bold text-xl text-gray-900">
+        <div className="border-b border-gray-100 pb-3 pr-8">
+          <h3 className="font-bold text-lg sm:text-xl text-gray-900">
             {initialData ? 'Edit Property Listing' : 'Add New Property Listing'}
           </h3>
           <p className="text-xs text-gray-500">Enter full details for property publication.</p>
@@ -126,7 +126,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
 
         {error && <div className="p-3 bg-red-50 text-red-600 text-xs rounded-lg">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {/* Images */}
           <div>
             <label className="block text-xs font-bold text-gray-700 mb-2">Property Images</label>
@@ -146,7 +146,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 placeholder="e.g. 10 Marla Brand New House for Sale in DHA Phase 6"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none touch-target"
               />
             </div>
             <div>
@@ -157,19 +157,19 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 placeholder="e.g. 25000000"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] focus:outline-none touch-target"
               />
             </div>
           </div>
 
           {/* Purpose & Type */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">Purpose</label>
               <select
                 value={formData.purpose}
                 onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B]"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] touch-target"
               >
                 <option value="FOR_SALE">For Sale</option>
                 <option value="FOR_RENT">For Rent</option>
@@ -181,7 +181,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               <select
                 value={formData.propertyType}
                 onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B]"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] touch-target"
               >
                 <option value="HOUSE">House</option>
                 <option value="APARTMENT">Apartment</option>
@@ -198,7 +198,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               <select
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B]"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] touch-target"
               >
                 {PAKISTAN_CITIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -211,7 +211,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B]"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 focus:ring-2 focus:ring-[#16834B] touch-target"
               >
                 <option value="PUBLISHED">PUBLISHED</option>
                 <option value="DRAFT">DRAFT</option>
@@ -232,7 +232,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 placeholder="e.g. DHA Phase 6"
                 value={formData.area}
                 onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
             <div>
@@ -242,7 +242,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 placeholder="e.g. DHA"
                 value={formData.society}
                 onChange={(e) => setFormData({ ...formData, society: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
             <div>
@@ -253,7 +253,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 placeholder="e.g. Block MB, House #14"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
           </div>
@@ -266,7 +266,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 type="number"
                 value={formData.bedrooms}
                 onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
 
@@ -276,7 +276,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 type="number"
                 value={formData.bathrooms}
                 onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
 
@@ -287,7 +287,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
                 step="0.1"
                 value={formData.areaSize}
                 onChange={(e) => setFormData({ ...formData, areaSize: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
               />
             </div>
 
@@ -296,7 +296,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               <select
                 value={formData.areaUnit}
                 onChange={(e) => setFormData({ ...formData, areaUnit: e.target.value })}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-800 text-xs rounded-lg p-2.5 touch-target"
               >
                 <option value="MARLA">Marla</option>
                 <option value="KANAL">Kanal</option>
@@ -326,13 +326,13 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               placeholder="Electricity, Gas, Water Supply, Security, Lawn, Car Parking"
               value={formData.featuresText}
               onChange={(e) => setFormData({ ...formData, featuresText: e.target.value })}
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5"
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2.5 touch-target"
             />
           </div>
 
           {/* Toggles */}
-          <div className="flex items-center space-x-6 pt-2">
-            <label className="flex items-center space-x-2 text-xs font-bold text-gray-700 cursor-pointer">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
+            <label className="flex items-center space-x-2 text-xs font-bold text-gray-700 cursor-pointer touch-target">
               <input
                 type="checkbox"
                 checked={formData.isFeatured}
@@ -342,7 +342,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
               <span>★ Featured Property (Highlight)</span>
             </label>
 
-            <label className="flex items-center space-x-2 text-xs font-bold text-gray-700 cursor-pointer">
+            <label className="flex items-center space-x-2 text-xs font-bold text-gray-700 cursor-pointer touch-target">
               <input
                 type="checkbox"
                 checked={formData.isVerified}
@@ -356,7 +356,7 @@ export default function PropertyFormModal({ isOpen, onClose, onSuccess, initialD
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#16834B] hover:bg-[#126b3d] text-white font-bold py-3 rounded-xl transition text-sm shadow-md cursor-pointer"
+            className="w-full bg-[#16834B] hover:bg-[#126b3d] text-white font-bold py-3.5 rounded-xl transition text-sm shadow-md cursor-pointer touch-target"
           >
             {submitting ? 'Saving Property...' : initialData ? 'Update Property' : 'Publish Property'}
           </button>
