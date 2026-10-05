@@ -181,10 +181,10 @@ export default function ProviderDashboardClient({
         )}
 
         {/* Dashboard Navigation Tabs */}
-        <div className="flex border-b border-gray-200 overflow-x-auto space-x-6 text-sm font-bold">
+        <div className="flex border-b border-gray-200 overflow-x-auto no-scrollbar space-x-4 sm:space-x-6 text-xs sm:text-sm font-bold max-w-full py-1">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`pb-3 border-b-2 transition ${
+            className={`pb-3 border-b-2 transition whitespace-nowrap shrink-0 cursor-pointer touch-target ${
               activeTab === 'overview' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -192,7 +192,7 @@ export default function ProviderDashboardClient({
           </button>
           <button
             onClick={() => setActiveTab('requests')}
-            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 ${
+            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 whitespace-nowrap shrink-0 cursor-pointer touch-target ${
               activeTab === 'requests' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -203,7 +203,7 @@ export default function ProviderDashboardClient({
           </button>
           <button
             onClick={() => setActiveTab('jobs')}
-            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 ${
+            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 whitespace-nowrap shrink-0 cursor-pointer touch-target ${
               activeTab === 'jobs' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -214,7 +214,7 @@ export default function ProviderDashboardClient({
           </button>
           <button
             onClick={() => setActiveTab('fees')}
-            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 ${
+            className={`pb-3 border-b-2 transition flex items-center space-x-1.5 whitespace-nowrap shrink-0 cursor-pointer touch-target ${
               activeTab === 'fees' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -227,7 +227,7 @@ export default function ProviderDashboardClient({
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`pb-3 border-b-2 transition ${
+            className={`pb-3 border-b-2 transition whitespace-nowrap shrink-0 cursor-pointer touch-target ${
               activeTab === 'profile' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >

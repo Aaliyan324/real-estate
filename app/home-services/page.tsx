@@ -210,15 +210,17 @@ export default function HomeServicesPage() {
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
-            <div className="flex items-center bg-white rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-              <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search: electrician, AC repair, plumber, painter..."
-                className="flex-1 px-4 py-4 text-gray-900 text-sm focus:outline-none bg-transparent"
-              />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl shadow-2xl border border-white/20 p-1.5 gap-2">
+              <div className="flex items-center flex-1 px-3 py-1">
+                <Search className="w-5 h-5 text-gray-400 shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search: electrician, AC repair, plumber, painter..."
+                  className="w-full px-3 py-2.5 text-gray-900 text-xs sm:text-sm focus:outline-none bg-transparent"
+                />
+              </div>
               <button
                 onClick={() => {
                   if (searchResults[0]) {
@@ -226,7 +228,7 @@ export default function HomeServicesPage() {
                     setStep(2)
                   }
                 }}
-                className="m-1.5 bg-[#16834B] hover:bg-[#126b3d] text-white font-bold px-6 py-3 rounded-xl text-sm transition"
+                className="bg-[#16834B] hover:bg-[#126b3d] text-white font-bold px-6 py-3 rounded-xl text-xs sm:text-sm transition cursor-pointer touch-target shrink-0"
               >
                 Find Expert
               </button>
@@ -249,9 +251,9 @@ export default function HomeServicesPage() {
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#16834B] flex items-center justify-center shrink-0">
                       <CategoryIcon icon={cat.icon} className="w-4 h-4" />
                     </div>
-                    <div>
-                      <div className="text-sm font-bold text-gray-900">{cat.name}</div>
-                      <div className="text-xs text-gray-500 truncate max-w-md">{cat.description}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs sm:text-sm font-bold text-gray-900 truncate">{cat.name}</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500 truncate max-w-md">{cat.description}</div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-gray-300 ml-auto shrink-0" />
                   </button>
@@ -262,16 +264,16 @@ export default function HomeServicesPage() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10">
         {/* Step indicators */}
         {step < 4 && (
-          <div className="flex items-center justify-center space-x-3 sm:space-x-6 text-xs font-bold">
+          <div className="flex items-center justify-start sm:justify-center space-x-2 sm:space-x-6 text-xs font-bold overflow-x-auto py-2 no-scrollbar max-w-full">
             {[
               { n: 1, label: 'Choose Service' },
               { n: 2, label: 'Your Location' },
               { n: 3, label: 'Describe Problem' },
             ].map((s) => (
-              <div key={s.n} className="flex items-center space-x-2">
+              <div key={s.n} className="flex items-center space-x-2 shrink-0">
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black ${
                     step > s.n
@@ -292,15 +294,15 @@ export default function HomeServicesPage() {
         {/* Step 1: Category Grid */}
         {step === 1 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Home Services</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center">Popular Home Services</h2>
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div key={i} className="h-28 bg-gray-100 animate-pulse rounded-2xl" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3">
                 {categories.map((cat) => (
                   <button
                     key={cat.id}
@@ -308,10 +310,10 @@ export default function HomeServicesPage() {
                       setSelectedCategory(cat)
                       setStep(2)
                     }}
-                    className="group flex flex-col items-center space-y-2 p-5 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-[#16834B] rounded-2xl transition text-left shadow-xs hover:shadow-md"
+                    className="group flex flex-col items-center space-y-2 p-4 sm:p-5 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-[#16834B] rounded-2xl transition text-left shadow-xs hover:shadow-md touch-target"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 group-hover:bg-[#16834B] text-[#16834B] group-hover:text-white flex items-center justify-center transition shadow-xs">
-                      <CategoryIcon icon={cat.icon} className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 group-hover:bg-[#16834B] text-[#16834B] group-hover:text-white flex items-center justify-center transition shadow-xs shrink-0">
+                      <CategoryIcon icon={cat.icon} className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <span className="text-xs font-bold text-gray-900 text-center leading-tight">{cat.name}</span>
                   </button>

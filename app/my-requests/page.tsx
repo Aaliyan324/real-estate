@@ -124,14 +124,14 @@ export default function MyRequestsPage() {
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Service Requests</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Service Requests</h1>
             <p className="text-xs text-gray-500 mt-0.5">Track all your home service requests and provider offers</p>
           </div>
           <Link
             href="/home-services"
-            className="inline-flex items-center space-x-2 bg-[#16834B] hover:bg-[#126b3d] text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm"
+            className="inline-flex items-center justify-center space-x-2 bg-[#16834B] hover:bg-[#126b3d] text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition shadow-sm touch-target shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>New Request</span>
@@ -139,7 +139,7 @@ export default function MyRequestsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+        <div className="flex items-center space-x-2 overflow-x-auto py-1 no-scrollbar max-w-full">
           {TABS.map((tab) => {
             const count =
               tab === 'ALL'
@@ -149,7 +149,7 @@ export default function MyRequestsPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition border ${
+                className={`px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition border shrink-0 touch-target ${
                   activeTab === tab
                     ? 'bg-[#16834B] text-white border-[#16834B]'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
