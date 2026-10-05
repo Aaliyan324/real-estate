@@ -155,9 +155,9 @@ export default function AdminDashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-xs">
           <div>
-            <h1 className="text-2xl font-black text-gray-900">Admin Control Panel</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-900">Admin Control Panel</h1>
             <p className="text-xs text-gray-500">Manage real estate listings, customer inquiries, visit bookings, and agent profiles.</p>
           </div>
 
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
               setSelectedProperty(null)
               setPropertyModalOpen(true)
             }}
-            className="flex items-center space-x-2 bg-[#16834B] hover:bg-[#126b3d] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-sm cursor-pointer"
+            className="flex items-center justify-center space-x-2 bg-[#16834B] hover:bg-[#126b3d] text-white font-bold text-xs px-4 py-3 rounded-xl transition shadow-sm cursor-pointer touch-target shrink-0 w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Property</span>
@@ -174,53 +174,53 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* KPI Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex items-center space-x-4">
-            <div className="p-3 bg-green-50 text-[#16834B] rounded-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs flex items-center space-x-4">
+            <div className="p-3 bg-green-50 text-[#16834B] rounded-xl shrink-0">
               <Building2 className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase text-gray-400">Total Properties</span>
-              <p className="text-2xl font-black text-gray-900">{loading ? '...' : properties.length}</p>
+              <span className="text-[11px] font-bold uppercase text-gray-400">Total Properties</span>
+              <p className="text-xl sm:text-2xl font-black text-gray-900">{loading ? '...' : properties.length}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex items-center space-x-4">
-            <div className="p-3 bg-yellow-50 text-[#F4C430] rounded-xl">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs flex items-center space-x-4">
+            <div className="p-3 bg-yellow-50 text-[#F4C430] rounded-xl shrink-0">
               <Star className="w-6 h-6 fill-current text-[#F4C430]" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase text-gray-400">Featured Listings</span>
-              <p className="text-2xl font-black text-gray-900">{properties.filter((p) => p.isFeatured).length}</p>
+              <span className="text-[11px] font-bold uppercase text-gray-400">Featured Listings</span>
+              <p className="text-xl sm:text-2xl font-black text-gray-900">{properties.filter((p) => p.isFeatured).length}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex items-center space-x-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs flex items-center space-x-4">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl shrink-0">
               <MessageSquare className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase text-gray-400">Inquiries Received</span>
-              <p className="text-2xl font-black text-gray-900">{inquiries.length}</p>
+              <span className="text-[11px] font-bold uppercase text-gray-400">Inquiries Received</span>
+              <p className="text-xl sm:text-2xl font-black text-gray-900">{inquiries.length}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex items-center space-x-4">
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs flex items-center space-x-4">
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0">
               <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase text-gray-400">Visit Bookings</span>
-              <p className="text-2xl font-black text-gray-900">{visits.length}</p>
+              <span className="text-[11px] font-bold uppercase text-gray-400">Visit Bookings</span>
+              <p className="text-xl sm:text-2xl font-black text-gray-900">{visits.length}</p>
             </div>
           </div>
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-gray-200 bg-white px-4 rounded-xl border space-x-6 overflow-x-auto">
+        <div className="flex border-b border-gray-200 bg-white px-4 rounded-xl border space-x-4 sm:space-x-6 overflow-x-auto no-scrollbar max-w-full">
           <button
             onClick={() => setActiveTab('properties')}
-            className={`py-4 text-sm font-bold border-b-2 transition cursor-pointer ${
+            className={`py-3.5 text-xs sm:text-sm font-bold border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 touch-target ${
               activeTab === 'properties' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-900'
             }`}
           >
@@ -228,7 +228,7 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab('inquiries')}
-            className={`py-4 text-sm font-bold border-b-2 transition cursor-pointer ${
+            className={`py-3.5 text-xs sm:text-sm font-bold border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 touch-target ${
               activeTab === 'inquiries' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-900'
             }`}
           >
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab('visits')}
-            className={`py-4 text-sm font-bold border-b-2 transition cursor-pointer ${
+            className={`py-3.5 text-xs sm:text-sm font-bold border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 touch-target ${
               activeTab === 'visits' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-900'
             }`}
           >
@@ -244,7 +244,7 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab('agents')}
-            className={`py-4 text-sm font-bold border-b-2 transition cursor-pointer ${
+            className={`py-3.5 text-xs sm:text-sm font-bold border-b-2 transition cursor-pointer whitespace-nowrap shrink-0 touch-target ${
               activeTab === 'agents' ? 'border-[#16834B] text-[#16834B]' : 'border-transparent text-gray-500 hover:text-gray-900'
             }`}
           >
