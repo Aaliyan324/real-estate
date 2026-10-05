@@ -34,42 +34,6 @@ const PROPERTY_TYPES = [
   { label: 'Farm House', value: 'FARM_HOUSE' },
 ]
 
-'use client'
-
-import React from 'react'
-import { Filter, RotateCcw } from 'lucide-react'
-import LocationSearch from '@/components/LocationSearch'
-
-interface PropertyFiltersProps {
-  filters: {
-    purpose: string
-    type: string
-    city: string
-    query: string
-    minPrice: string
-    maxPrice: string
-    bedrooms: string
-    bathrooms: string
-    minArea: string
-    maxArea: string
-    featured: boolean
-    verified: boolean
-  }
-  onFilterChange: (key: string, value: unknown) => void
-  onReset: () => void
-}
-
-const PROPERTY_TYPES = [
-  { label: 'All Types', value: '' },
-  { label: 'House', value: 'HOUSE' },
-  { label: 'Apartment / Flat', value: 'APARTMENT' },
-  { label: 'Plot & Land', value: 'PLOT' },
-  { label: 'Commercial', value: 'COMMERCIAL' },
-  { label: 'Office', value: 'OFFICE' },
-  { label: 'Shop', value: 'SHOP' },
-  { label: 'Farm House', value: 'FARM_HOUSE' },
-]
-
 export default function PropertyFilters({ filters, onFilterChange, onReset }: PropertyFiltersProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-xs space-y-5">

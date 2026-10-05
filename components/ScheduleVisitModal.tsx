@@ -59,7 +59,6 @@ export default function ScheduleVisitModal({ propertyId, propertyTitle, isOpen, 
   }
 
   return (
-  return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fade-in">
       <div className="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 shadow-2xl relative my-auto">
         <button
