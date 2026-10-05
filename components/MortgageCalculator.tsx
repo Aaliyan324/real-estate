@@ -101,7 +101,7 @@ export default function MortgageCalculator() {
             <div className="flex justify-between items-center text-xs font-bold text-gray-700">
               <span>Loan Duration ({loanTermYears} Years)</span>
             </div>
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
               {[5, 10, 15, 20, 25].map((years) => (
                 <button
                   key={years}
