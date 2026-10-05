@@ -105,10 +105,10 @@ function PropertiesContent() {
       <Header />
 
       {/* Top Banner Search */}
-      <div className="bg-[#16834B] py-8 px-4 sm:px-6 lg:px-8 text-white shadow-inner">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <h1 className="text-2xl sm:text-3xl font-black">Search Properties in Pakistan</h1>
-          <p className="text-green-100 text-sm">
+      <div className="bg-[#16834B] py-6 sm:py-8 px-4 sm:px-6 lg:px-8 text-white shadow-inner">
+        <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
+          <h1 className="text-xl sm:text-3xl font-black">Search Properties in Pakistan</h1>
+          <p className="text-green-100 text-xs sm:text-sm">
             Discover verified residential houses, commercial plots, and apartments across major cities.
           </p>
 
@@ -125,19 +125,19 @@ function PropertiesContent() {
                   handleFilterChange('query', loc.areaOrKeyword)
                 }
               }}
-              placeholder="Search by city, area, society or keyword (e.g. DHA, Johar Town, F-11)..."
-              inputClassName="py-3 text-sm bg-gray-50 border-0"
+              placeholder="Search by city, area, society or keyword (e.g. DHA, Johar Town)..."
+              inputClassName="py-2.5 sm:py-3 text-xs sm:text-sm bg-gray-50 border-0"
             />
           </div>
         </div>
       </div>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full">
         {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3.5 sm:p-4 rounded-xl border border-gray-200 shadow-xs">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">
               {filters.purpose === 'FOR_SALE'
                 ? 'Properties for Sale'
                 : filters.purpose === 'FOR_RENT'
@@ -147,18 +147,18 @@ function PropertiesContent() {
             <p className="text-xs text-gray-500">Showing {total} properties matching your criteria</p>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
             <button
               type="button"
               onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="lg:hidden flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg text-xs font-bold transition cursor-pointer"
+              className="lg:hidden flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg text-xs font-bold transition cursor-pointer touch-target"
             >
               <SlidersHorizontal className="w-4 h-4 text-[#16834B]" />
               <span>Filters</span>
             </button>
 
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-semibold text-gray-600">Sort by:</span>
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <span className="text-xs font-semibold text-gray-600 hidden sm:inline">Sort:</span>
               <select
                 value={sort}
                 onChange={(e) => {
@@ -166,7 +166,7 @@ function PropertiesContent() {
                   setSort(e.target.value)
                   setPage(1)
                 }}
-                className="bg-gray-50 border border-gray-300 text-gray-800 text-xs rounded-lg p-2 font-semibold focus:ring-2 focus:ring-[#16834B] focus:outline-none cursor-pointer"
+                className="bg-gray-50 border border-gray-300 text-gray-800 text-xs rounded-lg p-2 font-semibold focus:ring-2 focus:ring-[#16834B] focus:outline-none cursor-pointer touch-target"
               >
                 <option value="newest">Newest First</option>
                 <option value="price_asc">Price: Low to High</option>
@@ -178,22 +178,22 @@ function PropertiesContent() {
         </div>
 
         {/* Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block lg:col-span-1">
             <PropertyFilters filters={filters} onFilterChange={handleFilterChange} onReset={handleReset} />
           </div>
 
-          {/* Mobile Filters Modal */}
+          {/* Mobile Filters Drawer Modal */}
           {showMobileFilters && (
-            <div className="fixed inset-0 z-50 bg-black/50 p-4 flex justify-center items-center lg:hidden">
-              <div className="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-4 space-y-4">
-                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <h3 className="font-bold text-gray-900">Filters</h3>
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs p-4 flex justify-center items-end sm:items-center lg:hidden">
+              <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 space-y-4 shadow-2xl animate-fade-in">
+                <div className="flex justify-between items-center border-b border-gray-100 pb-2.5 sticky top-0 bg-white z-10 pt-1">
+                  <h3 className="font-bold text-gray-900 text-base">Property Filters</h3>
                   <button
                     type="button"
                     onClick={() => setShowMobileFilters(false)}
-                    className="text-gray-500 font-bold text-sm cursor-pointer"
+                    className="text-gray-500 hover:text-gray-900 font-bold text-sm px-2 py-1 rounded-lg bg-gray-100 cursor-pointer touch-target"
                   >
                     Close ✕
                   </button>
@@ -206,7 +206,7 @@ function PropertiesContent() {
           {/* Properties Grid */}
           <div className="lg:col-span-3 space-y-6">
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
                   <div key={n} className="bg-white rounded-xl h-80 animate-pulse border border-gray-200 p-4 space-y-3">
                     <div className="bg-gray-200 h-44 rounded-lg w-full"></div>
@@ -216,25 +216,25 @@ function PropertiesContent() {
                 ))}
               </div>
             ) : properties.length === 0 ? (
-              <div className="bg-white rounded-xl border border-gray-200 p-12 text-center space-y-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-8 sm:p-12 text-center space-y-4">
                 <div className="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto flex items-center justify-center text-gray-400">
                   <Building2 className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">No properties found</h3>
-                <p className="text-sm text-gray-500 max-w-md mx-auto">
+                <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto">
                   We couldn&apos;t find any properties matching your current filter criteria. Try changing the location, price range, or clearing filters.
                 </p>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer"
+                  className="bg-[#16834B] hover:bg-[#126b3d] text-white text-xs font-bold px-4 py-2.5 rounded-lg transition cursor-pointer touch-target"
                 >
                   Clear All Filters
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {properties.map((prop) => (
                     <PropertyCard key={prop.id} property={prop} />
                   ))}
@@ -247,18 +247,18 @@ function PropertiesContent() {
                       type="button"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer"
+                      className="p-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer touch-target flex items-center justify-center"
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <span className="text-sm font-semibold text-gray-700 px-4">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 px-3 sm:px-4">
                       Page {page} of {totalPages}
                     </span>
                     <button
                       type="button"
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer"
+                      className="p-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 disabled:opacity-40 hover:bg-gray-50 transition cursor-pointer touch-target flex items-center justify-center"
                     >
                       <ChevronRight className="w-5 h-5" />
                     </button>

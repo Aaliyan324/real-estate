@@ -83,10 +83,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <Link
       href={`/properties/${property.slug}`}
-      className="group block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-[#16834B]/40 transition-all duration-300 flex flex-col focus:outline-none focus:ring-2 focus:ring-[#16834B] cursor-pointer"
+      className="group block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-[#16834B]/40 transition-all duration-300 flex flex-col focus:outline-none focus:ring-2 focus:ring-[#16834B] cursor-pointer h-full"
     >
       {/* Image Container */}
-      <div className="relative aspect-4/3 w-full bg-gray-100 overflow-hidden">
+      <div className="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
         <img
           src={mainImage}
           alt={property.title}
@@ -96,16 +96,16 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         />
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center z-10">
+        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 items-center z-10 max-w-[calc(100%-3.5rem)]">
           <span
-            className={`text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-white shadow-xs ${
+            className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider text-white shadow-xs ${
               property.purpose === 'FOR_SALE' ? 'bg-[#16834B]' : 'bg-blue-600'
             }`}
           >
             {property.purpose === 'FOR_SALE' ? 'For Sale' : 'For Rent'}
           </span>
           {property.isFeatured && (
-            <span className="bg-[#F4C430] text-[#1F2937] text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xs">
+            <span className="bg-[#F4C430] text-[#1F2937] text-[10px] sm:text-xs font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider shadow-xs">
               ★ Featured
             </span>
           )}
@@ -115,7 +115,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         <button
           type="button"
           onClick={toggleFavorite}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition shadow-md cursor-pointer z-10 ${
+          className={`absolute top-2.5 right-2.5 sm:top-3 sm:right-3 p-2 rounded-full backdrop-blur-md transition shadow-md cursor-pointer z-10 touch-target flex items-center justify-center ${
             isFavorited ? 'bg-red-50 text-red-500' : 'bg-white/80 text-gray-700 hover:bg-white hover:text-red-500'
           }`}
           title={isFavorited ? 'Remove from Favorites' : 'Save to Favorites'}
@@ -125,30 +125,30 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </button>
 
         {/* Property Type Badge */}
-        <div className="absolute bottom-3 left-3 bg-black/70 text-white text-[11px] font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs">
+        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 bg-black/70 text-white text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs">
           {property.propertyType.replace('_', ' ')}
         </div>
       </div>
 
       {/* Content Container */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <div className="space-y-2">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+        <div className="space-y-1.5 sm:space-y-2">
           {/* Price & Verified */}
-          <div className="flex items-center justify-between">
-            <span className="text-xl font-black text-[#16834B] tracking-tight">
+          <div className="flex flex-wrap items-center justify-between gap-1">
+            <span className="text-lg sm:text-xl font-black text-[#16834B] tracking-tight">
               {formatPKRPrice(property.price)}
               {property.purpose === 'FOR_RENT' && <span className="text-xs font-normal text-gray-500"> / mo</span>}
             </span>
             {property.isVerified && (
-              <span className="inline-flex items-center text-[11px] font-bold text-[#16834B] bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
-                <ShieldCheck className="w-3 h-3 mr-1 text-[#16834B]" />
+              <span className="inline-flex items-center text-[10px] sm:text-[11px] font-bold text-[#16834B] bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+                <ShieldCheck className="w-3 h-3 mr-1 text-[#16834B] shrink-0" />
                 Verified
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-bold text-gray-900 line-clamp-2 text-base group-hover:text-[#16834B] transition leading-snug">
+          <h3 className="font-bold text-gray-900 line-clamp-2 text-sm sm:text-base group-hover:text-[#16834B] transition leading-snug">
             {property.title}
           </h3>
 
@@ -162,28 +162,28 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         {/* Specs & View Action Indicator */}
-        <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600 font-semibold">
-          <div className="flex items-center space-x-3">
+        <div className="pt-3 sm:pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600 font-semibold gap-2">
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
             {property.bedrooms > 0 && (
-              <span className="flex items-center space-x-1" title="Bedrooms">
-                <Bed className="w-4 h-4 text-[#16834B]" />
+              <span className="flex items-center space-x-1 whitespace-nowrap" title="Bedrooms">
+                <Bed className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#16834B] shrink-0" />
                 <span>{property.bedrooms} Beds</span>
               </span>
             )}
             {property.bathrooms > 0 && (
-              <span className="flex items-center space-x-1" title="Bathrooms">
-                <Bath className="w-4 h-4 text-[#16834B]" />
+              <span className="flex items-center space-x-1 whitespace-nowrap" title="Bathrooms">
+                <Bath className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#16834B] shrink-0" />
                 <span>{property.bathrooms} Baths</span>
               </span>
             )}
-            <span className="flex items-center space-x-1" title="Area">
-              <Maximize2 className="w-3.5 h-3.5 text-[#16834B]" />
+            <span className="flex items-center space-x-1 whitespace-nowrap" title="Area">
+              <Maximize2 className="w-3.5 h-3.5 text-[#16834B] shrink-0" />
               <span>{formatAreaUnit(property.areaSize, property.areaUnit)}</span>
             </span>
           </div>
 
-          <span className="text-[#16834B] font-bold flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
-            <span>Details</span>
+          <span className="text-[#16834B] font-bold flex items-center space-x-1 group-hover:translate-x-1 transition-transform shrink-0">
+            <span className="hidden sm:inline">Details</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
